@@ -9,11 +9,9 @@ class Hospital(models.Model):
     Attributes:
         name (str): The name of the hospital.
         state (ForeignKey): The state where the hospital is located. 
-                            Linked to the State model with a CASCADE delete behavior.
         supervisor (ForeignKey): The supervisor assigned to the hospital. 
-                                 If the supervisor is deleted, the field is set to NULL.
-        username (str): Unique username for the hospital's account, used for login.
-        password (str): Hashed password for the hospital's account.
+        username (str): Username for the hospital's account, used for login.
+        password (str): Password for the hospital's account.
     """
     name = models.CharField(max_length=255)
     state = models.ForeignKey(State, on_delete=models.CASCADE)
