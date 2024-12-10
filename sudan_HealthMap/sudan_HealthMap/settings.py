@@ -42,6 +42,7 @@ INSTALLED_APPS = [
     'disease_statistics',
     'hospital',
     'state',
+    'case',
     'rest_framework',
 ]
 
