@@ -37,6 +37,12 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+    'supervisor',
+    'disease',
+    'disease_statistics',
+    'hospital',
+    'state',
+    'rest_framework',
 ]
 
 MIDDLEWARE = [
@@ -76,11 +82,11 @@ WSGI_APPLICATION = 'sudan_HealthMap.wsgi.application'
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.mysql',
-        'NAME': 'sudan_healthmap_db',  # Replace with your database name
-        'USER': 'root',     # Replace with your MySQL username
-        'PASSWORD': 'root',  # Replace with your MySQL password
-        'HOST': 'localhost',          # Replace with your host (default is localhost)
-        'PORT': '3306',               # Default MySQL port
+        'NAME': 'sudan_healthmap_db',
+        'USER': 'root',
+        'PASSWORD': 'root',
+        'HOST': 'localhost',
+        'PORT': '3306',
     }
 }
 
