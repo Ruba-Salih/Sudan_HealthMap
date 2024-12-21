@@ -1,4 +1,6 @@
+from django.contrib.auth.models import User
 from django.db import models
+from .hospital_service import create_hospital_account
 
 class Supervisor(models.Model):
     """
@@ -13,6 +15,7 @@ class Supervisor(models.Model):
     email = models.EmailField(unique=True)
     password = models.CharField(max_length=128)
 
+
     def __str__(self):
         """
         String representation of the Supervisor instance.
@@ -21,3 +24,6 @@ class Supervisor(models.Model):
             str: The name of the supervisor.
         """
         return self.name
+
+    def create_hospital_account(self, name, state, username, password):
+        return create_hospital_account(self, name, state, username, password)
