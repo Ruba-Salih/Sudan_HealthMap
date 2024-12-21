@@ -24,6 +24,6 @@ class Supervisor(models.Model):
             str: The name of the supervisor.
         """
         return self.name
-    
+
     def create_hospital_account(self, name, state, username, password):
         return create_hospital_account(self, name, state, username, password)
