@@ -3,6 +3,9 @@ from django.db import models
 from .hospital_service import create_hospital_account
 
 class SupervisorManager(BaseUserManager):
+    """
+    Custom manager for Supervisor model.
+    """
     def create_user(self, email, name, password=None, **extra_fields):
         if not email:
             raise ValueError("The Email field must be set.")

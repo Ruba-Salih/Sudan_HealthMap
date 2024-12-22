@@ -1,3 +1,4 @@
+from django.conf import settings
 from django.db import models
 
 class Disease(models.Model):
@@ -10,7 +11,7 @@ class Disease(models.Model):
     """
     name = models.CharField(max_length=255, unique=True)
     description = models.TextField(blank=True, null=True)
-    created_by = models.ForeignKey('auth.User', on_delete=models.SET_NULL,
+    created_by = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.SET_NULL,
                                    null=True, blank=True)
 
     def __str__(self):
