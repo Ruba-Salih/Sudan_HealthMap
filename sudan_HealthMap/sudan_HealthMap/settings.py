@@ -78,6 +78,20 @@ TEMPLATES = [
 
 WSGI_APPLICATION = 'sudan_HealthMap.wsgi.application'
 
+REST_FRAMEWORK = {
+    'DEFAULT_AUTHENTICATION_CLASSES': [
+        'rest_framework.authentication.SessionAuthentication',
+        'rest_framework.authentication.TokenAuthentication',
+    ],
+}
+
+
+AUTHENTICATION_BACKENDS = [
+    'supervisor.auth.SupervisorBackend',
+    'django.contrib.auth.backends.ModelBackend',
+]
+
+
 
 # Database
 # https://docs.djangoproject.com/en/4.2/ref/settings/#databases
