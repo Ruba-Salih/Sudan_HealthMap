@@ -1,5 +1,5 @@
 from django.contrib.auth import authenticate, login
-from django.shortcuts import render, redirect
+from django.shortcuts import render, redirect, get_object_or_404
 from rest_framework.decorators import api_view, permission_classes
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
@@ -10,6 +10,8 @@ from django.http import HttpResponse
 from django.contrib.auth.decorators import login_required
 from rest_framework.authentication import SessionAuthentication
 from django.contrib import messages
+from django.db.models import Q
+from hospital.models import Hospital
 from .forms import HospitalAccountForm
 from .hospital_service import create_hospital_account
 
@@ -69,6 +71,29 @@ def add_hospital_account(request):
         form = HospitalAccountForm()
 
     return render(request, 'supervisor/add_hospital_account.html', {'form': form})
+
+
+@login_required
+def delete_hospitals(request):
+    """
+    View to search and delete hospital accounts.
+    """
+    query = request.GET.get('query', '')
+    hospitals = Hospital.objects.all()
+
+    if query:
+        hospitals = hospitals.filter(
+            Q(name__icontains=query) | Q(state__name__icontains=query)
+        )
+
+    if request.method == 'POST':
+        hospital_id = request.POST.get('hospital_id')  # Get hospital ID from the form
+        hospital = get_object_or_404(Hospital, id=hospital_id)
+        hospital.delete()
+        messages.success(request, f"Hospital '{hospital.name}' has been deleted.")
+        return redirect('delete_hospitals')
+
+    return render(request, 'supervisor/delete_hospitals.html', {'hospitals': hospitals, 'query': query})
 
 
 @api_view(['GET', 'POST'])
