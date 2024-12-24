@@ -1,8 +1,6 @@
-from django.contrib.auth import authenticate, login
 from django.shortcuts import render, redirect
+from django.contrib.auth import authenticate, login
 from django.contrib import messages
-from django.contrib.auth.decorators import login_required
-from django.http import HttpResponse
 from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework import status
@@ -11,7 +9,6 @@ from django.shortcuts import get_object_or_404
 from .serializers import HospitalSerializer, DiseaseSerializer
 from hospital.models import Hospital
 from disease.models import Disease
-
 
 def supervisor_login(request):
     """
@@ -23,26 +20,12 @@ def supervisor_login(request):
         user = authenticate(request, username=email, password=password)
         if user is not None:
             login(request, user)
-            return redirect('supervisor_dashboard')  # Redirect to the dashboard
+            return redirect('supervisor_dashboard')  # Redirect to dashboard after login
         else:
             messages.error(request, "Invalid login credentials.")
             return render(request, 'supervisor/login.html')
 
     return render(request, 'supervisor/login.html')
-
-def home(request):
-    """
-    Simple home view for the application.
-    """
-    return HttpResponse("Welcome to the Sudan HealthMap!")
-
-@login_required
-def supervisor_dashboard(request):
-    """
-    Display the dashboard for the supervisor.
-    """
-    return render(request, 'supervisor/dashboard.html')
-
 
 class HospitalListCreateAPIView(APIView):
     """

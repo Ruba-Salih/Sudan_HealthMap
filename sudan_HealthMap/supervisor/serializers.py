@@ -1,5 +1,22 @@
 from rest_framework import serializers
+from hospital.models import Hospital
 from disease.models import Disease
+
+class HospitalSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Hospital
+        fields = ['id', 'name', 'state', 'username', 'password', 'supervisor']
+        extra_kwargs = {
+            'password': {'write_only': True}
+        }
+
+    def create(self, validated_data):
+        password = validated_data.pop('password')
+        hospital = Hospital(**validated_data)
+        hospital.set_password(password)
+        hospital.save()
+        return hospital
+    
 
 class DiseaseSerializer(serializers.ModelSerializer):
     """
@@ -9,4 +26,4 @@ class DiseaseSerializer(serializers.ModelSerializer):
     class Meta:
         model = Disease
         fields = ['id', 'name', 'description', 'created_by']
-        read_only_fields = ['id', 'created_by']  # Prevent 'id' and 'created_by' from being modified
+        read_only_fields = ['id', 'created_by']

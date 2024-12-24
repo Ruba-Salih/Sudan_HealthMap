@@ -4,11 +4,12 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Add Disease</title>
+    {% load static %}
+    <script src="{% static 'supervisor/js/script.js' %}" defer></script>
 </head>
 <body>
     <h1>Add a New Disease</h1>
-    <form method="post">
-        {% csrf_token %}
+    <form id="diseaseForm">
         <label for="name">Disease Name:</label>
         <input type="text" id="name" name="name" required>
         <br>
@@ -17,11 +18,5 @@
         <br>
         <button type="submit">Add Disease</button>
     </form>
-    {% if success_message %}
-        <p style="color: green;">{{ success_message }}</p>
-    {% endif %}
-    {% if error_message %}
-        <p style="color: red;">{{ error_message }}</p>
-    {% endif %}
 </body>
 </html>
