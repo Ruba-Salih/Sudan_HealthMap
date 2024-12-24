@@ -20,6 +20,7 @@ from supervisor.views import home
 
 urlpatterns = [
     path('admin/', admin.site.urls),
-    path('supervisor/', include('supervisor.urls')),
     path('', home, name='home'),
+    path('supervisor/', include('supervisor.urls')),
+    path('state/', include('state.urls')),
 ]
