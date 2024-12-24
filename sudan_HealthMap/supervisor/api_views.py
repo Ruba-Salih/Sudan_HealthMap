@@ -1,19 +1,14 @@
-from django.contrib.auth import authenticate, login
 from django.shortcuts import render, redirect
+from django.contrib.auth import authenticate, login
 from django.contrib import messages
-from django.contrib.auth.decorators import login_required
-from django.http import HttpResponse
 from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework import status
 from rest_framework.permissions import IsAuthenticated
 from django.shortcuts import get_object_or_404
 from .serializers import HospitalSerializer, DiseaseSerializer
-from state.serializers import StateSerializer
 from hospital.models import Hospital
 from disease.models import Disease
-from state.models import State
-
 
 def supervisor_login(request):
     """
@@ -25,39 +20,41 @@ def supervisor_login(request):
         user = authenticate(request, username=email, password=password)
         if user is not None:
             login(request, user)
-            return redirect('supervisor_dashboard')  # Redirect to the dashboard
+            return redirect('supervisor_dashboard')  # Redirect to dashboard after login
         else:
             messages.error(request, "Invalid login credentials.")
             return render(request, 'supervisor/login.html')
 
     return render(request, 'supervisor/login.html')
 
-def home(request):
-    """
-    Simple home view for the application.
-    """
-    return HttpResponse("Welcome to the Sudan HealthMap!")
-
-@login_required
-def supervisor_dashboard(request):
-    """
-    Display the dashboard for the supervisor.
-    """
-    return render(request, 'supervisor/dashboard.html')
-
-
 class HospitalListCreateAPIView(APIView):
     """
-    API view for listing all hospitals and creating a new hospital account.
+    API view for listing all hospitals associated with the logged-in supervisor
+    and creating a new hospital account.
     """
     permission_classes = [IsAuthenticated]
 
     def get(self, request):
+        """
+        Retrieve a list of all hospitals created by the logged-in supervisor.
+
+        Returns:
+            Response: Serialized list of hospitals.
+        """
         hospitals = Hospital.objects.filter(supervisor=request.user)
         serializer = HospitalSerializer(hospitals, many=True)
         return Response(serializer.data)
 
     def post(self, request):
+        """
+        Create a new hospital account.
+
+        Args:
+            request (Request): Contains the hospital details in JSON format.
+
+        Returns:
+            Response: The created hospital details or validation errors.
+        """
         serializer = HospitalSerializer(data=request.data)
         if serializer.is_valid():
             serializer.save(supervisor=request.user)
@@ -67,20 +64,19 @@ class HospitalListCreateAPIView(APIView):
 
 class HospitalRetrieveUpdateDeleteAPIView(APIView):
     """
-    API view for retrieving, updating, or deleting a specific hospital account
-    and retrieving the list of states.
+    API view for retrieving, updating, or deleting a specific hospital account.
     """
     permission_classes = [IsAuthenticated]
 
-    def get(self, request, pk=None):
+    def get(self, request, pk):
         """
-        Retrieve details of a specific hospital by ID or a list of states.
+        Retrieve details of a specific hospital by ID.
 
         Args:
-            pk (int): Primary key of the hospital. If None, return states list.
+            pk (int): Primary key of the hospital.
 
         Returns:
-            Response: Serialized hospital details or list of states.
+            Response: Serialized hospital details.
         """
         hospital = get_object_or_404(Hospital, pk=pk, supervisor=request.user)
         serializer = HospitalSerializer(hospital)
@@ -142,7 +138,8 @@ class DiseaseListCreateAPIView(APIView):
         Create a new disease.
 
         Args:
-            request (Request): Contains the disease details.
+            request (Request): Contains the disease details in JSON format.
+
         Returns:
             Response: The created disease details or validation errors.
         """
@@ -179,7 +176,7 @@ class DiseaseRetrieveUpdateDeleteAPIView(APIView):
 
         Args:
             pk (int): Primary key of the disease.
-            request (Request): Contains updated disease details.
+            request (Request): Contains updated disease details in JSON format.
 
         Returns:
             Response: Updated disease details or validation errors.
@@ -204,21 +201,3 @@ class DiseaseRetrieveUpdateDeleteAPIView(APIView):
         disease = get_object_or_404(Disease, pk=pk, created_by=request.user)
         disease.delete()
         return Response(status=status.HTTP_204_NO_CONTENT)
-    
-
-class StateListAPIView(APIView):
-    """
-    API view to list all states.
-    """
-    permission_classes = [IsAuthenticated]
-
-    def get(self, request):
-        """
-        Retrieve a list of all states.
-
-        Returns:
-            Response: Serialized list of states.
-        """
-        states = State.objects.all()
-        serializer = StateSerializer(states, many=True)
-        return Response(serializer.data)

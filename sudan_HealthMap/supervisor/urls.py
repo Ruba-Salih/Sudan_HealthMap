@@ -1,12 +1,24 @@
 from django.urls import path
+from django.views.generic import TemplateView
 from . import views
 
 urlpatterns = [
+    # Authentication and Dashboard
     path('login/', views.supervisor_login, name='supervisor_login'),
     path('dashboard/', views.supervisor_dashboard, name='supervisor_dashboard'),
-    path('add-disease/', views.add_disease_form, name='add_disease_form'),
-    path('api/add-disease/', views.add_disease, name='api_add_disease'),
-    path('add-hospital-account/', views.add_hospital_account, name='add_hospital_account'),
-    path('delete-hospitals/', views.delete_hospitals, name='delete_hospitals'),
 
+    # Manage HTML Templates
+    path('manage-diseases/', TemplateView.as_view(template_name="supervisor/manage_diseases.html"), name='manage_diseases'),
+    path('manage-hospitals/', TemplateView.as_view(template_name="supervisor/manage_hospitals.html"), name='manage_hospitals'),
+
+    # API Endpoints for Diseases
+    path('api/diseases/', views.DiseaseListCreateAPIView.as_view(), name='disease-list'),
+    path('api/diseases/<int:pk>/', views.DiseaseRetrieveUpdateDeleteAPIView.as_view(), name='disease-detail'),
+
+    # API Endpoints for Hospitals
+    path('api/hospitals/', views.HospitalListCreateAPIView.as_view(), name='hospital-list'),
+    path('api/hospitals/<int:pk>/', views.HospitalRetrieveUpdateDeleteAPIView.as_view(), name='hospital-detail'),
+
+    # API Endpoint for States
+    path('api/states/', views.StateListAPIView.as_view(), name='state-list'),
 ]
