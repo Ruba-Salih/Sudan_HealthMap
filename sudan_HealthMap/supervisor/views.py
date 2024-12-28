@@ -22,21 +22,26 @@ def supervisor_login(request):
     if request.method == 'POST':
         email = request.POST.get('email')
         password = request.POST.get('password')
+
+        print("Username:", email)  # Debug
+        print("Password:", password)
         user = authenticate(request, username=email, password=password)
         if user is not None:
+            print("Authentication successful. Logging in user.")
             login(request, user)
             return redirect('supervisor_dashboard')  # Redirect to the dashboard
         else:
+            print("Authentication failed. Invalid credentials.")
             messages.error(request, "Invalid login credentials.")
-            return render(request, 'supervisor/login.html')
+            return render(request, 'login.html')
 
-    return render(request, 'supervisor/login.html')
+    return render(request, 'login.html')
 
 def home(request):
     """
     Simple home view for the application.
     """
-    return HttpResponse("Welcome to the Sudan HealthMap!")
+    return render(request, 'base.html')
 
 @login_required
 def supervisor_dashboard(request):
