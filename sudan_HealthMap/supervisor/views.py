@@ -2,7 +2,6 @@ from django.contrib.auth import authenticate, login
 from django.shortcuts import render, redirect
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required
-from django.http import HttpResponse
 from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework import status
@@ -23,7 +22,7 @@ def supervisor_login(request):
         email = request.POST.get('email')
         password = request.POST.get('password')
 
-        print("Username:", email)  # Debug
+        print("Username:", email)
         print("Password:", password)
         user = authenticate(request, username=email, password=password)
         if user is not None:
