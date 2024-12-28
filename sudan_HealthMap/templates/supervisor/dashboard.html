@@ -1,14 +1,17 @@
-<!DOCTYPE html>
-<html>
-<head>
-    <title>Supervisor Dashboard</title>
-</head>
-<body>
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Supervisor Dashboard{% endblock %}
+
+{% block content %}
+<div class="dashboard-container">
     <h1>Welcome to the Supervisor Dashboard</h1>
-    <ul>
+    <ul class="dashboard-links">
         <li><a href="/supervisor/manage-diseases/">Manage Diseases</a></li>
         <li><a href="/supervisor/manage-hospitals/">Manage Hospitals</a></li>
         <li><a href="{% url 'supervisor_login' %}">Logout</a></li>
     </ul>
-</body>
-</html>
+</div>
+
+<script src="{% static 'js/supervisor/dashboard.js' %}" defer></script>
+{% endblock %}
