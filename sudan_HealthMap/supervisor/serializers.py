@@ -1,12 +1,12 @@
 from django.contrib.auth.hashers import make_password
 from rest_framework import serializers
-from rest_framework.response import Response
 from state.models import State
 from hospital.models import Hospital
 from disease.models import Disease
+from supervisor.models import Supervisor
+
 
 class HospitalSerializer(serializers.ModelSerializer):
-
     state_name = serializers.ReadOnlyField(source='state.name')
 
     class Meta:
@@ -18,15 +18,34 @@ class HospitalSerializer(serializers.ModelSerializer):
 
     def create(self, validated_data):
         """
-        Override create method to hash the password before saving.
+        Override create method to hash the password and assign a supervisor.
         """
+        email = validated_data.get('username')
+
+        # Check if the supervisor with this email already exists
+        supervisor = Supervisor.objects.filter(email=email).first()
+        if not supervisor:
+            # Create a new supervisor if it doesn't exist
+            supervisor = Supervisor.objects.create_user(
+                email=email,
+                name=validated_data.get('name'),
+                password=validated_data.pop('password'),
+                role='hospital',
+            )
+
+        # Associate the supervisor with the hospital
+        validated_data['supervisor'] = supervisor
+        validated_data['user'] = supervisor
+
+        # Hash the password before saving the hospital
         password = validated_data.pop('password', None)
         hospital = Hospital(**validated_data)
         if password:
-            hospital.password = make_password(password)  # Hash the password
+            hospital.password = make_password(password)
         hospital.save()
+
         return hospital
-    
+
 
 class DiseaseSerializer(serializers.ModelSerializer):
     """

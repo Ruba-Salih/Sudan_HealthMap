@@ -1,61 +1,55 @@
-from django.shortcuts import render, redirect
-from django.contrib.auth.hashers import check_password
-from rest_framework.views import APIView
-from rest_framework.response import Response
-from rest_framework import status
-from .models import Hospital
-from .serializers import HospitalSerializer
+from django.shortcuts import render, redirect, get_object_or_404
+from django.contrib.auth import authenticate, login, logout
 from django.contrib.auth.decorators import login_required
+from django.contrib import messages
+from .models import Hospital
+
 
 def hospital_login(request):
     """
     View for Hospital Login
     """
-    error = None
-    if request.method == "POST":
-        email = request.POST.get("email")
-        password = request.POST.get("password")
-        print("Username:", email)
-        print("Password:", password)
-        try:
-            hospital = Hospital.objects.get(username=email)
-            print("Hospital Found:", hospital)
-            if check_password(password, hospital.password):
-                request.session['hospital_id'] = hospital.id
-                return redirect('hospital:hospital_dashboard')
-            else:
-                error = "Invalid username or password"
-        except Hospital.DoesNotExist:
-            error = "Invalid username or password"
 
-    return render(request, 'login.html', {'error': error})
+    if request.method == 'POST':
+        username = request.POST.get('email')
+        password = request.POST.get('password')
+
+        user = authenticate(request, username=username, password=password)
+
+        print(f"User: {user}, Role: {user.role if user else 'None'}")  # Log the user and role
+
+        if user is not None and user.role == 'hospital':
+            login(request, user)
+            print("Hospital login successful.")
+            return redirect('hospital:hospital_dashboard')
+        else:
+            print("Login failed. Invalid credentials or unauthorized access.")
+            messages.error(request, 'Invalid credentials or unauthorized access.')
+
+    return render(request, 'login.html')
+
+def logout_view(request):
+    logout(request)
+    return redirect('home')
+
+def home(request):
+    """
+    Simple home view for the application.
+    """
+    return render(request, 'base.html')
 
 @login_required
 def hospital_dashboard(request):
     """
     View for Hospital Dashboard
     """
-    hospital_id = request.session.get('hospital_id')
-    if 'hospital_id' not in request.session:
-        return redirect('hospital_login')
+
     try:
-        hospital = Hospital.objects.get(id=hospital_id)
+        # Check if the logged-in user has an associated hospital
+        print(f"Logged-in User: {request.user}, Role: {request.user.role}")
+        hospital = get_object_or_404(Hospital, user=request.user)
         return render(request, 'hospital/dashboard.html', {'hospital': hospital})
     except Hospital.DoesNotExist:
-        return redirect('hospital_login')
-
-class HospitalListCreateAPIView(APIView):
-    """
-    API View for listing and creating hospitals
-    """
-    def get(self, request):
-        hospitals = Hospital.objects.all()
-        serializer = HospitalSerializer(hospitals, many=True)
-        return Response(serializer.data)
-
-    def post(self, request):
-        serializer = HospitalSerializer(data=request.data)
-        if serializer.is_valid():
-            serializer.save()
-            return Response(serializer.data, status=status.HTTP_201_CREATED)
-        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+        # Log the issue if no associated hospital is found
+        print(f"No hospital found for user: {request.user}")
+        return render(request, 'error.html', {'message': 'No hospital found for this user.'})

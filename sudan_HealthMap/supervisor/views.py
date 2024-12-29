@@ -1,4 +1,4 @@
-from django.contrib.auth import authenticate, login
+from django.contrib.auth import authenticate, login, logout
 from django.shortcuts import render, redirect
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required
@@ -36,6 +36,10 @@ def supervisor_login(request):
 
     return render(request, 'login.html')
 
+
+def logout_view(request):
+    return redirect('home')
+
 def home(request):
     """
     Simple home view for the application.
@@ -50,6 +54,13 @@ def supervisor_dashboard(request):
     return render(request, 'supervisor/dashboard.html')
 
 
+def error_page(request):
+    """
+    Render the access denied error page.
+    """
+    return render(request, 'error.html', {'message': 'Access denied. Please log in with the correct role.'})
+
+
 class HospitalListCreateAPIView(APIView):
     """
     API view for listing all hospitals and creating a new hospital account.
@@ -62,9 +73,11 @@ class HospitalListCreateAPIView(APIView):
         return Response(serializer.data)
 
     def post(self, request):
-        serializer = HospitalSerializer(data=request.data)
+        data = request.data.copy()
+        data['supervisor'] = request.user.id
+        serializer = HospitalSerializer(data=request.data, context={'request': request})
         if serializer.is_valid():
-            serializer.save(supervisor=request.user)
+            serializer.save()
             return Response(serializer.data, status=status.HTTP_201_CREATED)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 

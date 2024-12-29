@@ -24,4 +24,6 @@ urlpatterns = [
     path('supervisor/', include('supervisor.urls')),
     path('hospital/', include(('hospital.urls'), namespace='hospital')),
     path('state/', include('state.urls')),
+    path('case/', include(('case.urls'), namespace='case')),
+    path('disease/', include(('disease.urls'), namespace='disease')),
 ]
