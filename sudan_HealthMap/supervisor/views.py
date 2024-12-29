@@ -23,15 +23,16 @@ def supervisor_login(request):
         email = request.POST.get('email')
         password = request.POST.get('password')
 
-        print("Username:", email)
-        print("Password:", password)
         user = authenticate(request, username=email, password=password)
         if user is not None:
-            print("Authentication successful. Logging in user.")
             login(request, user)
+
+            # Generate or get the token
+            token, _ = Token.objects.get_or_create(user=user)
+            request.session['api_token'] = token.key  # Store token in session
+
             return redirect('supervisor_dashboard')  # Redirect to the dashboard
         else:
-            print("Authentication failed. Invalid credentials.")
             messages.error(request, "Invalid login credentials.")
             return render(request, 'login.html')
 
@@ -39,6 +40,15 @@ def supervisor_login(request):
 
 
 def logout_view(request):
+    """
+    Log out the supervisor and clear the token.
+    """
+    if request.user.is_authenticated:
+        Token.objects.filter(user=request.user).delete()
+
+        logout(request)
+        request.session.flush()
+
     return redirect('home')
 
 def home(request):
@@ -52,8 +62,8 @@ def supervisor_dashboard(request):
     """
     Display the dashboard for the supervisor.
     """
-    return render(request, 'supervisor/dashboard.html')
-
+    token, _ = Token.objects.get_or_create(user=request.user)
+    return render(request, 'supervisor/dashboard.html', {'token': token.key})
 
 def error_page(request):
     """
