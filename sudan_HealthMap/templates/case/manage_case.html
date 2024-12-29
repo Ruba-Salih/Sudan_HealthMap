@@ -6,6 +6,8 @@
 {% block content %}
 <h1>Manage Cases</h1>
 
+<!-- Add Case Form -->
+<h2>Add New Case</h2>
 <form id="manage-case-form" method="post">
     {% csrf_token %}
     <label for="disease">Disease:</label>
@@ -71,8 +73,21 @@
         {% endfor %}
     </ul>
 {% endif %}
+
+<hr>
+
+<!-- Search and List of Cases -->
+<h2>Search and Manage Cases</h2>
+<form id="search-case-form">
+    <input type="text" id="search-query" placeholder="Search cases by patient number or disease name">
+    <button type="submit">Search</button>
+</form>
+<ul id="case-list"></ul>
 {% endblock %}
 
 {% block scripts %}
-    <script src="{% static 'js/case/manage_case.js' %}" defer></script>
+<script>
+    const API_TOKEN = "{{ token|escapejs }}";
+</script>
+<script src="{% static 'js/case/manage_case.js' %}" defer></script>
 {% endblock %}

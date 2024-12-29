@@ -1,7 +1,11 @@
 from rest_framework import serializers
+from disease.serializers import DiseaseSerializer
 from .models import Case
 
 class CaseSerializer(serializers.ModelSerializer):
+
+    disease = DiseaseSerializer(read_only=True)
+
     class Meta:
         model = Case
         fields = '__all__'
