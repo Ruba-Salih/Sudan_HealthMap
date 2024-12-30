@@ -9,9 +9,11 @@
     <ul class="dashboard-links">
         <li><a href="/supervisor/manage-diseases/">Manage Diseases</a></li>
         <li><a href="/supervisor/manage-hospitals/">Manage Hospitals</a></li>
-        <li><a href="{% url 'supervisor_login' %}">Logout</a></li>
     </ul>
 </div>
 
+<script>
+    const API_TOKEN = "{{ token }}"; // Dynamically inject token from the backend
+</script>
 <script src="{% static 'js/supervisor/dashboard.js' %}" defer></script>
 {% endblock %}

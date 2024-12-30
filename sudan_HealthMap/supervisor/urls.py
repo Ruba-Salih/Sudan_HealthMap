@@ -5,11 +5,12 @@ from . import views
 urlpatterns = [
     # Authentication and Dashboard
     path('login/', views.supervisor_login, name='supervisor_login'),
+    path('logout/', views.logout_view, name='logout'),
     path('dashboard/', views.supervisor_dashboard, name='supervisor_dashboard'),
 
     # Manage HTML Templates
     path('manage-diseases/', TemplateView.as_view(template_name="supervisor/manage_diseases.html"), name='manage_diseases'),
-    path('manage-hospitals/', TemplateView.as_view(template_name="supervisor/manage_hospitals.html"), name='manage_hospitals'),
+    path('manage-hospitals/', views.manage_hospitals, name='manage_hospitals'),
 
     # API Endpoints for Diseases
     path('api/diseases/', views.DiseaseListCreateAPIView.as_view(), name='disease-list'),
@@ -21,4 +22,5 @@ urlpatterns = [
 
     # API Endpoint for States
     path('api/states/', views.StateListAPIView.as_view(), name='state-list'),
+    path('error/', views.error_page, name='error_page'),
 ]

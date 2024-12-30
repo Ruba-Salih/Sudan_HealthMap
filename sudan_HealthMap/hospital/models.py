@@ -1,4 +1,5 @@
 from django.db import models
+from django.conf import settings
 from state.models import State
 from supervisor.models import Supervisor
 
@@ -13,10 +14,12 @@ class Hospital(models.Model):
         username (str): Username for the hospital's account, used for login.
         password (str): Password for the hospital's account.
     """
+
     name = models.CharField(max_length=255)
     state = models.ForeignKey(State, on_delete=models.CASCADE)
     supervisor = models.ForeignKey(Supervisor,
-        on_delete=models.SET_NULL, null=True)
+                                   on_delete=models.SET_NULL, null=True,
+                                   related_name='supervised_hospitals')
     username = models.CharField(max_length=150, unique=True)
     password = models.CharField(max_length=128)
 

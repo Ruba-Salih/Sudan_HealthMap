@@ -3,34 +3,39 @@
 {% block title %}Manage Diseases{% endblock %}
 
 {% block content %}
-<h1>Manage Diseases</h1>
+<div class="container">
+    <h1>Manage Diseases</h1>
 
-<!-- Add Disease Form -->
-<h2>Add Disease</h2>
-<form id="add-disease-form" onsubmit="addDisease(event)">
-    <label for="name">Disease Name:</label>
-    <input type="text" id="name" name="name" required>
-    <br>
-    <label for="description">Description:</label>
-    <textarea id="description" name="description" required></textarea>
-    <br>
-    <button type="submit">Add Disease</button>
-</form>
+    <!-- Add Disease Form -->
+    <div class="form-container">
+        <h2>Add Disease</h2>
+        <form id="add-disease-form" onsubmit="addDisease(event)">
+            <label for="name">Disease Name:</label>
+            <input type="text" id="name" name="name" required>
+            <br>
+            <label for="description">Description:</label>
+            <textarea id="description" name="description" required></textarea>
+            <br>
+            <button type="submit">Add Disease</button>
+        </form>
+    </div>
 
-<hr>
+    <hr>
 
-<!-- Search and List of Diseases -->
-<h2>Disease List</h2>
-<form id="search-form" onsubmit="searchDiseases(event)">
-    <label for="search-query">Search Diseases:</label>
-    <input type="text" id="search-query" placeholder="Enter name or description">
-    <button type="submit">Search</button>
-</form>
-<ul id="disease-list"></ul>
+    <!-- Search and List of Diseases -->
+    <div class="list-container">
+        <h2>Disease List</h2>
+        <form id="search-form" onsubmit="searchDiseases(event)">
+            <label for="search-query">Search Diseases:</label>
+            <input type="text" id="search-query" placeholder="Enter name or description">
+            <button type="submit">Search</button>
+        </form>
+        <ul id="disease-list"></ul>
+    </div>
+</div>
 {% endblock %}
 
 {% block scripts %}
-    <!-- Ensure the static tag is loaded -->
     {% load static %}
     <script src="{% static 'js/supervisor/manage_diseases.js' %}" defer></script>
 {% endblock %}

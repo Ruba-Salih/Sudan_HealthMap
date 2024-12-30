@@ -1,9 +1,10 @@
-from django.contrib.auth import authenticate, login
+from django.contrib.auth import authenticate, login, logout
 from django.shortcuts import render, redirect
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required
 from rest_framework.views import APIView
 from rest_framework.response import Response
+from rest_framework.authtoken.models import Token
 from rest_framework import status
 from rest_framework.permissions import IsAuthenticated
 from django.shortcuts import get_object_or_404
@@ -22,19 +23,33 @@ def supervisor_login(request):
         email = request.POST.get('email')
         password = request.POST.get('password')
 
-        print("Username:", email)
-        print("Password:", password)
         user = authenticate(request, username=email, password=password)
         if user is not None:
-            print("Authentication successful. Logging in user.")
             login(request, user)
+
+            # Generate or get the token
+            token, _ = Token.objects.get_or_create(user=user)
+            request.session['api_token'] = token.key  # Store token in session
+
             return redirect('supervisor_dashboard')  # Redirect to the dashboard
         else:
-            print("Authentication failed. Invalid credentials.")
             messages.error(request, "Invalid login credentials.")
             return render(request, 'login.html')
 
     return render(request, 'login.html')
+
+
+def logout_view(request):
+    """
+    Log out the supervisor and clear the token.
+    """
+    if request.user.is_authenticated:
+        Token.objects.filter(user=request.user).delete()
+
+        logout(request)
+        request.session.flush()
+
+    return redirect('home')
 
 def home(request):
     """
@@ -47,8 +62,23 @@ def supervisor_dashboard(request):
     """
     Display the dashboard for the supervisor.
     """
-    return render(request, 'supervisor/dashboard.html')
+    token, _ = Token.objects.get_or_create(user=request.user)
+    return render(request, 'supervisor/dashboard.html', {'token': token.key})
 
+def error_page(request):
+    """
+    Render the access denied error page.
+    """
+    return render(request, 'error.html', {'message': 'Access denied. Please log in with the correct role.'})
+
+@login_required
+def manage_hospitals(request):
+    """
+    View for managing hospitals.
+    """
+    token, _ = Token.objects.get_or_create(user=request.user)
+    print(f"Generated Token: {token.key}")
+    return render(request, 'supervisor/manage_hospitals.html', {'token': token.key})
 
 class HospitalListCreateAPIView(APIView):
     """
@@ -57,16 +87,21 @@ class HospitalListCreateAPIView(APIView):
     permission_classes = [IsAuthenticated]
 
     def get(self, request):
-        hospitals = Hospital.objects.filter(supervisor=request.user)
+        print(f"Supervisorc: {request.user}")  # Print the logged-in user
+        hospitals = request.user.supervised_hospitals.all()
+        print(f"Queryset: {hospitals.query}")  # Debug the SQL query
+        print(f"Retrieved Hospitals: {hospitals}")  # Debug the results
         serializer = HospitalSerializer(hospitals, many=True)
         return Response(serializer.data)
 
     def post(self, request):
-        serializer = HospitalSerializer(data=request.data)
+        serializer = HospitalSerializer(data=request.data, context={'request': request})
         if serializer.is_valid():
-            serializer.save(supervisor=request.user)
+            serializer.save()
             return Response(serializer.data, status=status.HTTP_201_CREATED)
-        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+        else:
+            print("Validation Errors:", serializer.errors)
+            return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
 
 class HospitalRetrieveUpdateDeleteAPIView(APIView):
@@ -86,9 +121,16 @@ class HospitalRetrieveUpdateDeleteAPIView(APIView):
         Returns:
             Response: Serialized hospital details or list of states.
         """
-        hospital = get_object_or_404(Hospital, pk=pk, supervisor=request.user)
-        serializer = HospitalSerializer(hospital)
-        return Response(serializer.data)
+        if pk:
+            hospital = get_object_or_404(Hospital, pk=pk, supervisor=request.user)
+            print(f"Supervisor from get: {request.user}, Hospitals: {hospital}")
+            serializer = HospitalSerializer(hospital)
+            return Response(serializer.data)
+        else:
+            hospitals = Hospital.objects.filter(supervisor=request.user)
+            print(f"Supervisor: {request.user}, Hospitals: {hospitals}")
+            serializer = HospitalSerializer(hospitals, many=True)
+            return Response(serializer.data)
 
     def put(self, request, pk):
         """

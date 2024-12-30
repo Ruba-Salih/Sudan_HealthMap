@@ -1,6 +1,6 @@
 from django.contrib.auth.models import AbstractBaseUser, BaseUserManager, PermissionsMixin
 from django.db import models
-from .hospital_service import create_hospital_account
+
 
 class SupervisorManager(BaseUserManager):
     """
@@ -25,8 +25,14 @@ class Supervisor(AbstractBaseUser, PermissionsMixin):
     """
     Custom Supervisor model that extends AbstractBaseUser and PermissionsMixin.
     """
+    ROLE_CHOICES = [
+        ('supervisor', 'Supervisor'),
+        ('hospital', 'Hospital'),
+    ]
+
     name = models.CharField(max_length=255)
     email = models.EmailField(unique=True)
+    role = models.CharField(max_length=20, choices=ROLE_CHOICES, default='supervisor')
     is_active = models.BooleanField(default=True)
     is_staff = models.BooleanField(default=False)
 
@@ -49,7 +55,4 @@ class Supervisor(AbstractBaseUser, PermissionsMixin):
     REQUIRED_FIELDS = ['name']
 
     def __str__(self):
-        return self.email
-
-    def create_hospital_account(self, name, state, username, password):
-        return create_hospital_account(self, name, state, username, password)
+        return f"{self.name} ({self.role})"
