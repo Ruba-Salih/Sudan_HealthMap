@@ -165,6 +165,12 @@ class HospitalRetrieveUpdateDeleteAPIView(APIView):
         return Response(status=status.HTTP_204_NO_CONTENT)
 
 
+@login_required
+def manage_diseases(request):
+    # Get the token for the logged-in user
+    token, _ = Token.objects.get_or_create(user=request.user)
+    return render(request, "supervisor/manage_diseases.html", {"token": token.key})
+
 class DiseaseListCreateAPIView(APIView):
     """
     API view for listing all diseases associated with the logged-in supervisor
