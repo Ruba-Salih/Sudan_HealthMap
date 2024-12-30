@@ -16,8 +16,9 @@
             <label for="description">Description:</label>
             <textarea id="description" name="description" required></textarea>
             <br>
-            <button type="submit">Add Disease</button>
+            <button type="submit" id="add-disease-btn">Add Disease</button>
         </form>
+        <button id="update-disease-btn" style="display: none;">Update Disease</button>
     </div>
 
     <hr>
@@ -37,5 +38,9 @@
 
 {% block scripts %}
     {% load static %}
+    <script>
+        const API_TOKEN = "{{ token }}"; // Dynamically inject the token from the backend
+        console.log("Injected API_TOKEN:", API_TOKEN);
+    </script>
     <script src="{% static 'js/supervisor/manage_diseases.js' %}" defer></script>
 {% endblock %}
