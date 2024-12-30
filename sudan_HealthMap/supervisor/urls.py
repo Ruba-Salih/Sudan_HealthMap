@@ -10,7 +10,7 @@ urlpatterns = [
 
     # Manage HTML Templates
     path('manage-diseases/', TemplateView.as_view(template_name="supervisor/manage_diseases.html"), name='manage_diseases'),
-    path('manage-hospitals/', TemplateView.as_view(template_name="supervisor/manage_hospitals.html"), name='manage_hospitals'),
+    path('manage-hospitals/', views.manage_hospitals, name='manage_hospitals'),
 
     # API Endpoints for Diseases
     path('api/diseases/', views.DiseaseListCreateAPIView.as_view(), name='disease-list'),

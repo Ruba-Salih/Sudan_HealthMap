@@ -3,34 +3,45 @@
 {% block title %}Manage Hospitals{% endblock %}
 
 {% block content %}
-<h1>Manage Hospitals</h1>
+<div class="container">
+    <h1>Manage Hospitals</h1>
 
-<!-- Add Hospitals Form -->
-<h2>Add Hospitals</h2>
-<form id="add-hospital-form" onsubmit="addHospital(event)">
-    <input type="text" id="name" placeholder="Hospital Name" required>
-    <br>
-    <select id="state" required></select>
-    <br>
-    <input type="text" id="username" placeholder="Username" required>
-    <br>
-    <input type="password" id="password" placeholder="Password" required>
-    <br>
-    <button type="submit">Add Hospital</button>
-</form>
+    <!-- Add Hospital Form -->
+    <div class="form-container">
+        <h2>Add Hospital</h2>
+        <form id="add-hospital-form" onsubmit="addHospital(event)">
+            <input type="text" id="name" placeholder="Hospital Name" autocomplete="organization" required>
+            <br>
+            <select id="state" required></select>
+            <br>
+            <input type="text" id="username" placeholder="Username" autocomplete="username" required>
+            <br>
+            <input type="password" id="password" placeholder="Password" autocomplete="new-password" required>
+            <br>
+            <button type="submit" id="add-hospital-btn">Add Hospital</button>
+            <button type="button" id="update-hospital-btn" style="display: none;">Update Hospital</button>
+        </form>
+    </div>
 
-<hr>
+    <hr>
 
-<!-- Search and List of Hospitals -->
-<h2>Hospital List</h2>
-<form id="search-form">
-    <input type="text" id="search-query" placeholder="Search hospitals...">
-    <button type="submit" onclick="searchHospitals(event)">Search</button>
-</form>
-<ul id="hospital-list"></ul>
+    <!-- Search and Hospital List -->
+    <div class="list-container">
+        <h2>Hospital List</h2>
+        <form id="search-form" onsubmit="searchHospitals(event)">
+            <input type="text" id="search-query" placeholder="Search hospitals...">
+            <button type="submit">Search</button>
+        </form>
+        <ul id="hospital-list"></ul>
+    </div>
+</div>
 {% endblock %}
 
 {% block scripts %}
     {% load static %}
-    <script src="{% static 'js/supervisor/manage_hospitals.js' %}" defer></script>
+    <script>
+        const API_TOKEN = "{{ token }}"; // Dynamically inject the token from backend
+        console.log("Injected API_TOKEN:", API_TOKEN);
+    </script>
+    <script src="{% static 'js/supervisor/any.js' %}" defer></script>
 {% endblock %}

@@ -11,9 +11,76 @@ document.addEventListener("DOMContentLoaded", () => {
     }
     console.log("DOM fully loaded and parsed.");
 
+    // Attach functions to the global window object
+    window.deleteHospital = deleteHospital;
+    window.showUpdateForm = showUpdateForm;
+
     fetchHospitals(); // Fetch all hospitals
     fetchStates(); // Fetch states for dropdown
 });
+
+// Helper function to get the CSRF token from the cookies
+function getCSRFToken() {
+    let cookieValue = null;
+    if (document.cookie && document.cookie !== "") {
+        const cookies = document.cookie.split("; ");
+        for (let i = 0; i < cookies.length; i++) {
+            const cookie = cookies[i].split("=");
+            if (cookie[0] === "csrftoken") {
+                cookieValue = decodeURIComponent(cookie[1]);
+                break;
+            }
+        }
+    }
+    return cookieValue;
+}
+
+
+// Add a new hospital
+async function addHospital(event) {
+    event.preventDefault();
+
+    const name = document.getElementById("name").value.trim();
+    const state = document.getElementById("state").value;
+    const username = document.getElementById("username").value.trim();
+    const password = document.getElementById("password").value.trim();
+
+    if (!name || !state || !username || !password) {
+        alert("All fields are required!");
+        return;
+    }
+
+    const csrfToken = getCSRFToken(); // Ensure the CSRF token is fetched correctly
+
+    try {
+        const response = await fetch(API_BASE_URL, {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json",
+                "X-CSRFToken": csrfToken, // Include CSRF token
+                Authorization: `Token ${API_TOKEN}`,
+            },
+            body: JSON.stringify({
+                name: name,
+                state: parseInt(state, 10), // Ensure state is passed as an integer
+                username: username,
+                password: password,
+            }),
+        });
+
+        if (response.ok) {
+            alert("Hospital added successfully!");
+            document.getElementById("add-hospital-form").reset();
+            fetchHospitals(); // Refresh the hospital list
+        } else {
+            const errorData = await response.json();
+            console.error("Error adding hospital:", errorData);
+            alert("Error: " + JSON.stringify(errorData));
+        }
+    } catch (error) {
+        console.error("Error adding hospital:", error);
+    }
+}
 
 // Fetch and populate state dropdown
 async function fetchStates() {
@@ -52,7 +119,7 @@ async function fetchHospitals() {
         });
         if (response.ok) {
             const hospitals = await response.json();
-            console.log("Fetched hospitals:", hospitals); 
+            console.log("Fetched hospitals:", hospitals);
             displayHospitals(hospitals);
         } else {
             console.error("Failed to fetch hospitals:", response.statusText);
@@ -74,82 +141,29 @@ function displayHospitals(hospitals) {
 
     hospitals.forEach((hospital) => {
         const li = document.createElement("li");
+        const stateName = hospital.state_name || "N/A"; // Adjust field as needed
         li.innerHTML = `
-            <strong>${hospital.name}</strong>: ${hospital.state_name || "N/A"}
+            <strong>${hospital.name}</strong>: ${stateName}
             <div class="actions">
-                <button onclick="deleteHospital(${hospital.id})">Delete</button>
-                <button onclick="showUpdateForm(${hospital.id}, '${hospital.name}', '${hospital.state}', '${hospital.address || ""}')">Edit</button>
+                <button onclick="window.deleteHospital(${hospital.id})">Delete</button>
+                <button onclick="window.showUpdateForm(${hospital.id}, '${hospital.name}', '${hospital.state}')">Edit</button>
             </div>
         `;
         list.appendChild(li);
     });
 }
 
-
-// Helper function to get the CSRF token from the cookies
-function getCSRFToken() {
-    let cookieValue = null;
-    if (document.cookie && document.cookie !== "") {
-        const cookies = document.cookie.split("; ");
-        for (let i = 0; i < cookies.length; i++) {
-            const cookie = cookies[i].split("=");
-            if (cookie[0] === "csrftoken") {
-                cookieValue = decodeURIComponent(cookie[1]);
-                break;
-            }
-        }
-    }
-    return cookieValue;
-}
-
-// Add a new hospital
-async function addHospital(event) {
-    event.preventDefault();
-    const name = document.getElementById("name").value.trim();
-    const state = document.getElementById("state").value;
-    const username = document.getElementById("username").value.trim();
-    const password = document.getElementById("password").value.trim();
-
-    if (!name || !state || !username || !password) {
-        alert("All fields are required!");
-        return;
-    }
-
-    const csrfToken = getCSRFToken();
-
-    try {
-        const response = await fetch(API_BASE_URL, {
-            method: "POST",
-            headers: {
-                "Content-Type": "application/json",
-                "X-CSRFToken": csrfToken, // Add CSRF token to the headers
-                Authorization: `Token ${API_TOKEN}`,
-            },
-            body: JSON.stringify({ name, state, username, password }),
-        });
-
-        if (response.ok) {
-            alert("Hospital added successfully!");
-            document.getElementById("add-hospital-form").reset();
-            fetchHospitals(); // Refresh the list
-        } else {
-            const errorData = await response.json();
-            alert("Error: " + JSON.stringify(errorData));
-        }
-    } catch (error) {
-        console.error("Error adding hospital:", error);
-    }
-}
-
-
 // Delete a hospital
 async function deleteHospital(hospitalId) {
     if (!confirm("Are you sure you want to delete this hospital?")) return;
+
+    const csrfToken = getCSRFToken();
 
     try {
         const response = await fetch(`${API_BASE_URL}${hospitalId}/`, {
             method: "DELETE",
             headers: {
+                "X-CSRFToken": csrfToken,
                 Authorization: `Token ${API_TOKEN}`,
             },
         });
@@ -166,10 +180,9 @@ async function deleteHospital(hospitalId) {
 }
 
 // Show update form for a specific hospital
-function showUpdateForm(hospitalId, currentName, currentState, currentAddress) {
+function showUpdateForm(hospitalId, currentName, currentState) {
     document.getElementById("name").value = currentName;
-    document.getElementById("state").value = currentState; // Ensure state dropdown uses correct value
-    document.getElementById("address").value = currentAddress || ""; // Pre-fill address or use empty string
+    document.getElementById("state").value = currentState;
 
     document.getElementById("add-hospital-btn").style.display = "none";
     document.getElementById("update-hospital-btn").style.display = "block";
@@ -180,25 +193,23 @@ function showUpdateForm(hospitalId, currentName, currentState, currentAddress) {
 
         const updatedName = document.getElementById("name").value.trim();
         const updatedState = document.getElementById("state").value;
-        const updatedAddress = document.getElementById("address").value.trim();
 
         if (!updatedName || !updatedState) {
             alert("Name and state are required!");
             return;
         }
 
+        const csrfToken = getCSRFToken();
+
         try {
             const response = await fetch(`${API_BASE_URL}${hospitalId}/`, {
                 method: "PUT",
                 headers: {
                     "Content-Type": "application/json",
+                    "X-CSRFToken": csrfToken,
                     Authorization: `Token ${API_TOKEN}`,
                 },
-                body: JSON.stringify({
-                    name: updatedName,
-                    state: updatedState,
-                    address: updatedAddress,
-                }),
+                body: JSON.stringify({ name: updatedName, state: updatedState }),
             });
 
             if (response.ok) {
@@ -207,6 +218,7 @@ function showUpdateForm(hospitalId, currentName, currentState, currentAddress) {
                 resetForm();
             } else {
                 const errorData = await response.json();
+                console.error("Error updating hospital:", errorData);
                 alert("Error: " + JSON.stringify(errorData));
             }
         } catch (error) {
@@ -219,36 +231,7 @@ function showUpdateForm(hospitalId, currentName, currentState, currentAddress) {
 function resetForm() {
     document.getElementById("name").value = "";
     document.getElementById("state").value = "";
-    document.getElementById("address").value = "";
 
     document.getElementById("add-hospital-btn").style.display = "block";
     document.getElementById("update-hospital-btn").style.display = "none";
-}
-
-// Search hospitals
-async function searchHospitals(event) {
-    event.preventDefault();
-    const query = document.getElementById("search-query").value.toLowerCase();
-
-    try {
-        const response = await fetch(API_BASE_URL, {
-            headers: {
-                Authorization: `Token ${API_TOKEN}`,
-            },
-        });
-        if (response.ok) {
-            const hospitals = await response.json();
-            const filteredHospitals = hospitals.filter((hospital) =>
-                hospital.name.toLowerCase().includes(query) ||
-                hospital.state.toLowerCase().includes(query) ||
-                (hospital.address && hospital.address.toLowerCase().includes(query))
-            );
-
-            displayHospitals(filteredHospitals); // Display filtered results
-        } else {
-            console.error("Failed to fetch hospitals:", response.statusText);
-        }
-    } catch (error) {
-        console.error("Error searching hospitals:", error);
-    }
 }

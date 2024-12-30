@@ -11,7 +11,7 @@ class HospitalSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Hospital
-        fields = ['id', 'name', 'state', 'state_name', 'username', 'password', 'supervisor']
+        fields = ['id', 'name', 'state', 'state_name', 'username', 'password']
         extra_kwargs = {
             'password': {'write_only': True}
         }
@@ -20,28 +20,22 @@ class HospitalSerializer(serializers.ModelSerializer):
         """
         Override create method to hash the password and assign a supervisor.
         """
-        email = validated_data.get('username')
+        request = self.context.get('request')
+        if not request or not request.user.is_authenticated:
+            raise serializers.ValidationError("A logged-in supervisor is required to create a hospital.")
 
-        # Check if the supervisor with this email already exists
-        supervisor = Supervisor.objects.filter(email=email).first()
-        if not supervisor:
-            # Create a new supervisor if it doesn't exist
-            supervisor = Supervisor.objects.create_user(
-                email=email,
-                name=validated_data.get('name'),
-                password=validated_data.pop('password'),
-                role='hospital',
-            )
-
-        # Associate the supervisor with the hospital
+        supervisor = request.user
+        print(f"Supervisor assigned: {supervisor}")
+        # Assign the supervisor to the hospital
         validated_data['supervisor'] = supervisor
-        validated_data['user'] = supervisor
 
-        # Hash the password before saving the hospital
+        # Hash the password before saving
         password = validated_data.pop('password', None)
         hospital = Hospital(**validated_data)
         if password:
             hospital.password = make_password(password)
+
+        # Save the hospital object
         hospital.save()
 
         return hospital

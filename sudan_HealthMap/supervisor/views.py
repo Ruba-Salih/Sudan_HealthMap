@@ -71,6 +71,14 @@ def error_page(request):
     """
     return render(request, 'error.html', {'message': 'Access denied. Please log in with the correct role.'})
 
+@login_required
+def manage_hospitals(request):
+    """
+    View for managing hospitals.
+    """
+    token, _ = Token.objects.get_or_create(user=request.user)
+    print(f"Generated Token: {token.key}")
+    return render(request, 'supervisor/manage_hospitals.html', {'token': token.key})
 
 class HospitalListCreateAPIView(APIView):
     """
@@ -79,18 +87,21 @@ class HospitalListCreateAPIView(APIView):
     permission_classes = [IsAuthenticated]
 
     def get(self, request):
-        hospitals = Hospital.objects.filter(supervisor=request.user)
+        print(f"Supervisorc: {request.user}")  # Print the logged-in user
+        hospitals = request.user.supervised_hospitals.all()
+        print(f"Queryset: {hospitals.query}")  # Debug the SQL query
+        print(f"Retrieved Hospitals: {hospitals}")  # Debug the results
         serializer = HospitalSerializer(hospitals, many=True)
         return Response(serializer.data)
 
     def post(self, request):
-        data = request.data.copy()
-        data['supervisor'] = request.user.id
         serializer = HospitalSerializer(data=request.data, context={'request': request})
         if serializer.is_valid():
             serializer.save()
             return Response(serializer.data, status=status.HTTP_201_CREATED)
-        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+        else:
+            print("Validation Errors:", serializer.errors)
+            return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
 
 class HospitalRetrieveUpdateDeleteAPIView(APIView):
@@ -110,9 +121,16 @@ class HospitalRetrieveUpdateDeleteAPIView(APIView):
         Returns:
             Response: Serialized hospital details or list of states.
         """
-        hospital = get_object_or_404(Hospital, pk=pk, supervisor=request.user)
-        serializer = HospitalSerializer(hospital)
-        return Response(serializer.data)
+        if pk:
+            hospital = get_object_or_404(Hospital, pk=pk, supervisor=request.user)
+            print(f"Supervisor from get: {request.user}, Hospitals: {hospital}")
+            serializer = HospitalSerializer(hospital)
+            return Response(serializer.data)
+        else:
+            hospitals = Hospital.objects.filter(supervisor=request.user)
+            print(f"Supervisor: {request.user}, Hospitals: {hospitals}")
+            serializer = HospitalSerializer(hospitals, many=True)
+            return Response(serializer.data)
 
     def put(self, request, pk):
         """

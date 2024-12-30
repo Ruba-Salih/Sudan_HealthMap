@@ -15,10 +15,6 @@ class Hospital(models.Model):
         password (str): Password for the hospital's account.
     """
 
-    user = models.ForeignKey(Supervisor,
-                                on_delete=models.CASCADE,
-                                related_name='hospitals',
-                                limit_choices_to={'role': 'hospital'})
     name = models.CharField(max_length=255)
     state = models.ForeignKey(State, on_delete=models.CASCADE)
     supervisor = models.ForeignKey(Supervisor,
