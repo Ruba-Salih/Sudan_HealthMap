@@ -1,11 +1,11 @@
 // Global API Endpoints
 const API_ENDPOINTS = {
-    diseases: '/disease/api/', // Endpoint to fetch diseases
-    cases: '/case/api/', // Endpoint to manage cases
+    diseases: "/disease/api/", // Endpoint to fetch diseases
+    cases: "/case/api/", // Endpoint to manage cases
 };
 
 // Authorization Token
-if (typeof API_TOKEN === 'undefined') {
+if (typeof API_TOKEN === "undefined") {
     const API_TOKEN = "{{ token }}"; // Replace dynamically from backend template
 }
 
@@ -59,6 +59,7 @@ function attachFormSubmitHandler() {
 
         const formData = new FormData(form);
         const data = Object.fromEntries(formData.entries());
+        data.disease = parseInt(data.disease); // Send disease ID
         data.alive = document.getElementById("alive").checked;
 
         const method = form.dataset.editing ? "PUT" : "POST";
@@ -121,13 +122,13 @@ function fetchAndDisplayCases(query = "") {
                 .filter(
                     (c) =>
                         c.patient_number.toString().includes(query) ||
-                        c.disease.name.toLowerCase().includes(query.toLowerCase())
+                        c.disease_name.toLowerCase().includes(query.toLowerCase())
                 )
                 .forEach((caseItem) => {
                     const listItem = document.createElement("li");
                     listItem.innerHTML = `
                         Patient Number: ${caseItem.patient_number}, 
-                        Disease Name: ${caseItem.disease.name || "N/A"}, 
+                        Disease Name: ${caseItem.disease_name || "N/A"}, 
                         Status: ${caseItem.patient_status}
                         <button onclick="editCase(${caseItem.id})">Edit</button>
                         <button onclick="deleteCase(${caseItem.id})">Delete</button>
@@ -192,20 +193,14 @@ function editCase(caseId) {
         .then((caseData) => {
             const form = document.getElementById("manage-case-form");
             Object.keys(caseData).forEach((key) => {
-                const field = form.querySelector(`[name="${key}"]`);
-                if (field) {
-                    if (field.type === "checkbox") {
-                        field.checked = caseData[key];
-                    } else {
-                        field.value = caseData[key];
-                    }
-                }
+                const input = form.querySelector(`[name="${key}"]`);
+                if (input) input.value = caseData[key];
             });
             form.dataset.editing = true;
             form.dataset.caseId = caseId;
         })
         .catch((error) => {
-            console.error("Error fetching case for editing:", error);
-            alert("Failed to load the case details for editing.");
+            console.error("Error fetching case:", error);
+            alert("Failed to fetch case for editing. Please try again.");
         });
 }

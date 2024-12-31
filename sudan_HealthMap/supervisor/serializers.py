@@ -11,7 +11,7 @@ class HospitalSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Hospital
-        fields = ['id', 'name', 'state', 'state_name', 'username', 'password']
+        fields = ['id', 'name', 'state', 'state_name', 'email', 'password']
         extra_kwargs = {
             'password': {'write_only': True}
         }

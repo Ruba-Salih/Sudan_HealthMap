@@ -1,5 +1,4 @@
 from django.db import models
-from django.conf import settings
 from state.models import State
 from supervisor.models import Supervisor
 
@@ -20,7 +19,7 @@ class Hospital(models.Model):
     supervisor = models.ForeignKey(Supervisor,
                                    on_delete=models.SET_NULL, null=True,
                                    related_name='supervised_hospitals')
-    username = models.CharField(max_length=150, unique=True)
+    email = models.CharField(max_length=150, unique=True)
     password = models.CharField(max_length=128)
 
     def __str__(self):

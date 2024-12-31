@@ -2,6 +2,7 @@ from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib.auth import authenticate, login, logout
 from django.contrib.auth.decorators import login_required
 from django.contrib import messages
+from rest_framework.authtoken.models import Token
 from .models import Hospital
 
 
@@ -11,16 +12,17 @@ def hospital_login(request):
     """
 
     if request.method == 'POST':
-        username = request.POST.get('email')
+        email = request.POST.get('email')
         password = request.POST.get('password')
 
-        user = authenticate(request, username=username, password=password)
+        user = authenticate(request, username=email, password=password)
 
         print(f"User: {user}, Role: {user.role if user else 'None'}")  # Log the user and role
 
-        if user is not None and user.role == 'hospital':
+        if user:
+            if user.is_staff:
+                return render(request, 'error.html', {'message': 'Supervisors cannot log in here.'})
             login(request, user)
-            print("Hospital login successful.")
             return redirect('hospital:hospital_dashboard')
         else:
             print("Login failed. Invalid credentials or unauthorized access.")
@@ -29,7 +31,14 @@ def hospital_login(request):
     return render(request, 'login.html')
 
 def logout_view(request):
-    logout(request)
+    """
+    Log out the hospital and clear the token.
+    """
+    if request.user.is_authenticated:
+        Token.objects.filter(user=request.user).delete()
+
+        logout(request)
+        request.session.flush()
     return redirect('home')
 
 def home(request):
@@ -43,13 +52,10 @@ def hospital_dashboard(request):
     """
     View for Hospital Dashboard
     """
-
-    try:
-        # Check if the logged-in user has an associated hospital
-        print(f"Logged-in User: {request.user}, Role: {request.user.role}")
-        hospital = get_object_or_404(Hospital, user=request.user)
+    if request.user.role == 'hospital':
+        hospital = Hospital.objects.filter(email=request.user.email).first()
         return render(request, 'hospital/dashboard.html', {'hospital': hospital})
-    except Hospital.DoesNotExist:
-        # Log the issue if no associated hospital is found
-        print(f"No hospital found for user: {request.user}")
-        return render(request, 'error.html', {'message': 'No hospital found for this user.'})
+    elif request.user.role == 'supervisor':
+        return render(request, 'supervisor/dashboard.html')
+    else:
+        return render(request, 'error.html', {'message': 'Role not recognized.'})
