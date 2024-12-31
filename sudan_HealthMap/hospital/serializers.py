@@ -4,4 +4,4 @@ from .models import Hospital
 class HospitalSerializer(serializers.ModelSerializer):
     class Meta:
         model = Hospital
-        fields = ['id', 'name', 'state', 'username', 'password']
+        fields = ['id', 'name', 'state', 'email', 'password']

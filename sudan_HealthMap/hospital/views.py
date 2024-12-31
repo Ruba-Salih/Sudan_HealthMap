@@ -11,16 +11,17 @@ def hospital_login(request):
     """
 
     if request.method == 'POST':
-        username = request.POST.get('email')
+        email = request.POST.get('email')
         password = request.POST.get('password')
 
-        user = authenticate(request, username=username, password=password)
+        user = authenticate(request, username=email, password=password)
 
         print(f"User: {user}, Role: {user.role if user else 'None'}")  # Log the user and role
 
-        if user is not None and user.role == 'hospital':
+        if user:
+            if user.is_staff:
+                return render(request, 'error.html', {'message': 'Supervisors cannot log in here.'})
             login(request, user)
-            print("Hospital login successful.")
             return redirect('hospital:hospital_dashboard')
         else:
             print("Login failed. Invalid credentials or unauthorized access.")
@@ -43,13 +44,18 @@ def hospital_dashboard(request):
     """
     View for Hospital Dashboard
     """
-
-    try:
-        # Check if the logged-in user has an associated hospital
-        print(f"Logged-in User: {request.user}, Role: {request.user.role}")
-        hospital = get_object_or_404(Hospital, user=request.user)
+    if request.user.role == 'hospital':
+        hospital = Hospital.objects.filter(supervisor=request.user).first()
         return render(request, 'hospital/dashboard.html', {'hospital': hospital})
-    except Hospital.DoesNotExist:
-        # Log the issue if no associated hospital is found
-        print(f"No hospital found for user: {request.user}")
-        return render(request, 'error.html', {'message': 'No hospital found for this user.'})
+    elif request.user.role == 'supervisor':
+        return render(request, 'supervisor/dashboard.html')
+    else:
+        return render(request, 'error.html', {'message': 'Role not recognized.'})
+    try:
+        hospitals = Hospital.objects.filter(supervisor=request.user)
+        print(f"Logged-in User: {request.user}, Role: {request.user.role}")
+    except Exception as e:
+        print(f"Error fetching hospitals: {e}")
+        hospitals = None  # Handle cases where there might not be any hospitals
+
+    return render(request, "hospital/dashboard.html", {"hospitals": hospitals})
