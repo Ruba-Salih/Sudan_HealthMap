@@ -2,6 +2,7 @@ from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib.auth import authenticate, login, logout
 from django.contrib.auth.decorators import login_required
 from django.contrib import messages
+from rest_framework.authtoken.models import Token
 from .models import Hospital
 
 
@@ -30,7 +31,14 @@ def hospital_login(request):
     return render(request, 'login.html')
 
 def logout_view(request):
-    logout(request)
+    """
+    Log out the hospital and clear the token.
+    """
+    if request.user.is_authenticated:
+        Token.objects.filter(user=request.user).delete()
+
+        logout(request)
+        request.session.flush()
     return redirect('home')
 
 def home(request):
@@ -45,17 +53,9 @@ def hospital_dashboard(request):
     View for Hospital Dashboard
     """
     if request.user.role == 'hospital':
-        hospital = Hospital.objects.filter(supervisor=request.user).first()
+        hospital = Hospital.objects.filter(email=request.user.email).first()
         return render(request, 'hospital/dashboard.html', {'hospital': hospital})
     elif request.user.role == 'supervisor':
         return render(request, 'supervisor/dashboard.html')
     else:
         return render(request, 'error.html', {'message': 'Role not recognized.'})
-    try:
-        hospitals = Hospital.objects.filter(supervisor=request.user)
-        print(f"Logged-in User: {request.user}, Role: {request.user.role}")
-    except Exception as e:
-        print(f"Error fetching hospitals: {e}")
-        hospitals = None  # Handle cases where there might not be any hospitals
-
-    return render(request, "hospital/dashboard.html", {"hospitals": hospitals})
