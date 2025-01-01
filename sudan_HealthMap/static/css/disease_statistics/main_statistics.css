@@ -1,0 +1,65 @@
+/* Center the donut chart */
+#diseaseDonutChart {
+    display: block;
+    margin: 0 auto;
+    max-width: 700px; /* Adjusted size */
+    max-height: 700px; /* Adjusted size */
+}
+
+/* Larger size for the bar chart container */
+#filteredDataChart {
+    display: block;
+    margin: 20px auto;
+    width: 800px; /* Explicit width */
+    height: 400px; /* Explicit height */
+    padding: 10px;
+    background-color: #f9f9f9;
+    border: 1px solid #ddd;
+    border-radius: 5px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+}
+
+/* Adjust table and spacing */
+table {
+    width: 80%;
+    margin: 20px auto;
+    border-collapse: collapse;
+}
+
+table th, table td {
+    border: 1px solid #ddd;
+    text-align: center;
+    padding: 8px;
+}
+
+h2 {
+    text-align: center;
+    margin: 20px 0;
+}
+
+/* Style for the scrollable table container */
+.table-container {
+    max-height: 500px;
+    overflow-y: auto;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    margin: 20px auto;
+    width: 80%;
+}
+
+/* Table styles */
+thead {
+    position: sticky;
+    top: 0;
+    background-color: #f1f1f1;
+    z-index: 1;
+}
+
+th, td {
+    border: 1px solid #ddd;
+    padding: 8px;
+}
+
+tbody tr:nth-child(even) {
+    background-color: #f9f9f9;
+}

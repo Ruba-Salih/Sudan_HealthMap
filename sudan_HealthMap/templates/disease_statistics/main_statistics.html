@@ -1,0 +1,97 @@
+{% extends 'base.html' %}
+
+{% load static %}
+
+{% block title %}
+Disease Statistics
+{% endblock %}
+
+{% block content %}
+<h1 style="text-align: center;">Disease Statistics</h1>
+
+<h2>Most Common Diseases</h2>
+<div class="table-container">
+    <table id="common-diseases-table">
+        <thead>
+            <tr>
+                <th>Disease</th>
+                <th>Cases</th>
+            </tr>
+        </thead>
+        <tbody>
+        </tbody>
+    </table>
+</div>
+
+<h2>Disease Distribution</h2>
+<div>
+    <canvas id="diseaseDonutChart"></canvas>
+</div>
+
+<h2>Filter Disease Data</h2>
+<div id="disease-filter-section" style="margin-top: 20px;">
+    <label for="disease-dropdown" style="font-weight: bold;">Select Disease:</label>
+    <select id="disease-dropdown" style="padding: 5px; font-size: 16px;">
+        <option value="" disabled selected>--Select Disease--</option>
+    </select>
+    
+    <label for="filter-category" style="font-weight: bold; margin-left: 10px;">Filter By:</label>
+    <select id="filter-category" style="padding: 5px; font-size: 16px;">
+        <option value="" disabled selected>--Select Filter Category--</option>
+        <option value="age">Age</option>
+        <option value="sex">Sex</option>
+        <option value="season">Season</option>
+        <option value="blood_type">Blood Type</option>
+        <option value="main_symptom">Main Symptom</option>
+    </select>
+    
+    <button id="filter-button" style="margin-left: 10px; padding: 5px 10px; font-size: 16px;" aria-label="Filter and show results" title="Filter and show results">
+        Show Results
+    </button>
+</div>
+
+<div id="loading-indicator" style="display: none; text-align: center; margin-top: 20px;">
+    <p>Loading data, please wait...</p>
+</div>
+
+<h2>Filtered Data Chart</h2>
+<div>
+    <canvas id="filteredDataChart" style="margin-top: 20px;"></canvas>
+</div>
+
+<h2>State-Level Disease Statistics</h2>
+<div style="margin-bottom: 20px;">
+    <label for="state-dropdown" style="font-weight: bold;">Select a State:</label>
+    <select id="state-dropdown" style="padding: 5px; font-size: 16px;">
+        <option value="">--Select State--</option>
+    </select>
+</div>
+<table id="state-disease-stats-table">
+    <thead>
+        <tr>
+            <th>Disease</th>
+            <th>Total Cases</th>
+            <th>Total Deaths</th>
+        </tr>
+    </thead>
+    <tbody>
+    </tbody>
+</table>
+
+<h2>Pie Chart of Diseases in States</h2>
+<div style="margin-top: 20px;">
+    <label for="disease-pie-dropdown" style="font-weight: bold;">Select Disease:</label>
+    <select id="disease-pie-dropdown" style="padding: 5px; font-size: 16px;">
+        <option value="" disabled selected>--Select Disease--</option>
+    </select>
+</div>
+
+<div>
+    <canvas id="diseasePieChart" style="margin-top: 20px; max-width: 800px; max-height: 500px; margin: 0 auto;"></canvas>
+</div>
+
+<link rel="stylesheet" href="{% static 'css/disease_statistics/main_statistics.css' %}">
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+<script src="{% static 'js/disease_statistics/main_statistics.js' %}"></script>
+{% endblock %}

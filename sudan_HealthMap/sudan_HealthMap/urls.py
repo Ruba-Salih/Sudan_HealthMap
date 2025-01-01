@@ -26,4 +26,5 @@ urlpatterns = [
     path('state/', include('state.urls')),
     path('case/', include(('case.urls'), namespace='case')),
     path('disease/', include(('disease.urls'), namespace='disease')),
+    path('statistics/', include('disease_statistics.urls')),
 ]

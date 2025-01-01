@@ -1,56 +1,49 @@
+from django.db.models import Count, Q
 import pandas as pd
-from django.db.models import Sum, Count
-import matplotlib.pyplot as plt
-from .models import DiseaseStatistics
+from case.models import Case
+from supervisor.serializers import StateSerializer
+from state.models import State  # Replace with the correct path to your State model
+
 
 def calculate_disease_statistics():
-    # Query DiseaseStatistics and related fields
-    queryset = DiseaseStatistics.objects.select_related('disease', 'hospital').values(
-        'disease__name', 'hospital__state', 'cases', 'deaths'
+    # Query and group data by disease and hospital (join Hospital for state data)
+    queryset = (
+        Case.objects.select_related('disease', 'hospital')
+        .values('disease__name', 'hospital__state__name', 'hospital__name')  # Use hospital__state__name
+        .annotate(
+            total_cases=Count('id'),  # Total number of cases for this disease
+            total_deaths=Count('id', filter=Q(patient_status='deceased'))  # Total deaths for this disease
+        )
     )
 
-    # Convert to a Pandas DataFrame
+    # Convert queryset to Pandas DataFrame for processing
     df = pd.DataFrame(list(queryset))
+
+    if df.empty:
+        return None, None, None
 
     # Aggregating statistics
     # 1. Most common diseases
-    common_diseases = df.groupby('disease__name')['cases'].sum().reset_index().sort_values(by='cases', ascending=False)
-
-    # 2. State-level disease prevalence
-    state_disease_stats = df.groupby(['hospital__state', 'disease__name']).agg(
-        total_cases=('cases', 'sum'),
-        total_deaths=('deaths', 'sum')
-    ).reset_index()
-
-    # 3. Spread Rate (mock total population for each state)
-    state_population = {
-        'State A': 500000,
-        'State B': 300000,
-        'State C': 400000,
-    }
-    df['spread_rate'] = df.apply(
-        lambda row: (row['cases'] / state_population.get(row['hospital__state'], 1)) * 100,
-        axis=1
+    common_diseases = (
+        df.groupby('disease__name')['total_cases']
+        .sum()
+        .reset_index()
+        .sort_values(by='total_cases', ascending=False)
     )
 
-    # Display the statistics
-    print("Most Common Diseases")
-    print(common_diseases)
+    # 2. State-level disease prevalence
+    state_disease_stats = (
+        df.groupby(['hospital__state__name', 'disease__name'])
+        .agg(
+            total_cases=('total_cases', 'sum'),
+            total_deaths=('total_deaths', 'sum')
+        )
+        .reset_index()
+    )
 
-    print("\nState-Level Disease Statistics")
-    print(state_disease_stats)
+    # Fetch unique states using the StateSerializer
+    states = State.objects.all()
+    serializer = StateSerializer(states, many=True)
+    unique_states = serializer.data  # Serialized state data
 
-    print("\nSpread Rate by Disease and State")
-    print(df[['hospital__state', 'disease__name', 'spread_rate']])
-
-    # Visualization
-    plt.figure(figsize=(10, 6))
-    plt.bar(common_diseases['disease__name'], common_diseases['cases'], color='skyblue')
-    plt.title('Most Common Diseases')
-    plt.xlabel('Disease')
-    plt.ylabel('Number of Cases')
-    plt.xticks(rotation=45)
-    plt.show()
-
-    return common_diseases, state_disease_stats, df
-
+    return common_diseases, state_disease_stats, unique_states
