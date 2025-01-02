@@ -1,6 +1,6 @@
-from django.contrib.auth import authenticate, login, logout
 from django.shortcuts import render, redirect
 from django.contrib import messages
+from django.contrib.auth import authenticate, login, logout
 from django.contrib.auth.decorators import login_required
 from rest_framework.views import APIView
 from rest_framework.response import Response
@@ -13,6 +13,8 @@ from state.serializers import StateSerializer
 from hospital.models import Hospital
 from disease.models import Disease
 from state.models import State
+from .utility import generate_report, generate_state_report
+
 
 
 def supervisor_login(request):
@@ -27,7 +29,6 @@ def supervisor_login(request):
         if user is not None:
             login(request, user)
 
-            # Generate or get the token
             token, _ = Token.objects.get_or_create(user=user)
             request.session['api_token'] = token.key  # Store token in session
 
@@ -62,8 +63,11 @@ def supervisor_dashboard(request):
     """
     Display the dashboard for the supervisor.
     """
-    token, _ = Token.objects.get_or_create(user=request.user)
-    return render(request, 'supervisor/dashboard.html', {'token': token.key})
+    token = request.session.get('api_token')
+    if not token:
+        return redirect('supervisor_login')
+
+    return render(request, 'supervisor/dashboard.html', {'token': token})
 
 def error_page(request):
     """
@@ -76,9 +80,106 @@ def manage_hospitals(request):
     """
     View for managing hospitals.
     """
-    token, _ = Token.objects.get_or_create(user=request.user)
+    token = request.session.get('api_token')
+    if not token:
+        return redirect('supervisor_login')
+
     print(f"Generated Token: {token.key}")
-    return render(request, 'supervisor/manage_hospitals.html', {'token': token.key})
+    return render(request, 'supervisor/manage_hospitals.html', {'token': token})
+
+@login_required
+def manage_reports(request):
+    """
+    View for managing reports.
+    """
+    token = request.session.get('api_token')
+    if not token:
+        return redirect('supervisor_login')
+
+    return render(request, "supervisor/manage_reports.html")
+
+@login_required
+def hospital_reports(request):
+    """
+    View for managing hospital reports.
+    """
+    token = request.session.get('api_token')
+    if not token:
+        return redirect('supervisor_login')
+
+    return render(request, "supervisor/hospital_reports.html", {'token': token})
+
+@login_required
+def simple_hospital_report(request, hospital_id):
+    """
+    Generate a simple report for a hospital showing disease cases.
+    """
+    token = request.session.get('api_token')
+    if not token:
+        return redirect('supervisor_login')
+    return generate_report(hospital_id, "simple", "json")
+
+@login_required
+def download_simple_report(request, hospital_id):
+    """
+    Generate and return the hospital report in CSV format for download.
+    """
+    token = request.session.get('api_token')
+    if not token:
+        return redirect('supervisor_login')
+    return generate_report(hospital_id, "simple", "csv")
+
+@login_required
+def detailed_hospital_report(request, hospital_id):
+    """
+    View a detialed report for a hospital.
+    """
+    token = request.session.get('api_token')
+    if not token:
+        return redirect('supervisor_login')
+    return generate_report(hospital_id, "detailed", "json")
+
+@login_required
+def download_detailed_report(request, hospital_id):
+    """
+    Generate and return the hospital report in CSV format for download.
+    """
+    token = request.session.get('api_token')
+    if not token:
+        return redirect('supervisor_login')
+    return generate_report(hospital_id, "detailed", "csv")
+
+@login_required
+def state_reports(request):
+    """
+    View for managing state reports.
+    """
+    token = request.session.get('api_token')
+    if not token:
+        return redirect('supervisor_login')
+
+    return render(request, "supervisor/state_reports.html", {'token': token})
+
+@login_required
+def state_report(request, state_id):
+    """
+    View for managing state reports.
+    """
+    token = request.session.get('api_token')
+    if not token:
+        return redirect('supervisor_login')
+
+    return generate_state_report(state_id, response_format="json")
+
+@login_required
+def download_state_report(request, state_id):
+    """
+    Generate and return the state report in CSV format for download.
+    """
+    token = request.session.get('api_token')
+    if not token:
+        return redirect('supervisor_login')
+    return generate_state_report(state_id, response_format="csv")
 
 class HospitalListCreateAPIView(APIView):
     """
@@ -87,10 +188,10 @@ class HospitalListCreateAPIView(APIView):
     permission_classes = [IsAuthenticated]
 
     def get(self, request):
-        print(f"Supervisorc: {request.user}")  # Print the logged-in user
+        print(f"Supervisorc: {request.user}")
         hospitals = request.user.supervised_hospitals.all()
-        print(f"Queryset: {hospitals.query}")  # Debug the SQL query
-        print(f"Retrieved Hospitals: {hospitals}")  # Debug the results
+        print(f"Queryset: {hospitals.query}")
+        print(f"Retrieved Hospitals: {hospitals}")
         serializer = HospitalSerializer(hospitals, many=True)
         return Response(serializer.data)
 
@@ -168,8 +269,11 @@ class HospitalRetrieveUpdateDeleteAPIView(APIView):
 @login_required
 def manage_diseases(request):
     # Get the token for the logged-in user
-    token, _ = Token.objects.get_or_create(user=request.user)
-    return render(request, "supervisor/manage_diseases.html", {"token": token.key})
+    token = request.session.get('api_token')
+    if not token:
+        return redirect('supervisor_login')
+
+    return render(request, "supervisor/manage_diseases.html", {"token": token})
 
 class DiseaseListCreateAPIView(APIView):
     """

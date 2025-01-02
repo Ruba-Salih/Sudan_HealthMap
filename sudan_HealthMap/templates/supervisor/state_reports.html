@@ -1,0 +1,35 @@
+{% extends 'base.html' %}
+
+{% load static %}
+
+{% block title %}State Reports{% endblock %}
+
+{% block content %}
+<div class="state-reports-container">
+    <h1>State Reports</h1>
+    <form id="state-report-form">
+        <label for="state">Select State:</label>
+        <select id="state" required></select>
+        <button type="submit">View Report</button>
+    </form>
+
+    <div id="state-report">
+        <h2>State Report</h2>
+        <button id="download-state-report" class="btn-secondary">Download Report</button>
+        <table id="state-report-table">
+            <thead>
+                <tr>
+                    <th>Hospital</th>
+                    <th>Disease</th>
+                    <th>Cases</th>
+                </tr>
+            </thead>
+            <tbody></tbody>
+        </table>
+    </div>
+</div>
+
+<link rel="stylesheet" href="{% static 'css/supervisor/state_reports.css' %}">
+<script>const API_TOKEN = "{{ token }}";console.log("API Token:", API_TOKEN);</script>
+<script src="{% static 'js/supervisor/state_reports.js' %}" defer></script>
+{% endblock %}

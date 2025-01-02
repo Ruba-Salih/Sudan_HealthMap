@@ -1,0 +1,119 @@
+/* Container styling */
+.state-reports-container {
+    margin: 20px auto;
+    max-width: 800px;
+    background-color: var(--background-color);
+    padding: 20px;
+    border-radius: 8px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    font-family: Arial, sans-serif;
+}
+
+/* Headings */
+h1 {
+    text-align: center;
+    font-size: 2rem;
+    color: var(--primary-color);
+    margin-bottom: 20px;
+}
+
+h2 {
+    font-size: 1.5rem;
+    color: var(--primary-color);
+    margin-bottom: 10px;
+}
+
+/* Form styling */
+form {
+    margin-bottom: 20px;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    justify-content: center;
+}
+
+label {
+    font-weight: bold;
+    color: var(--secondary-color);
+}
+
+select {
+    padding: 5px 10px;
+    font-size: 1rem;
+    border: 1px solid var(--table-border-color);
+    border-radius: 4px;
+    outline: none;
+    transition: box-shadow 0.2s ease;
+}
+
+select:focus {
+    box-shadow: 0 0 4px var(--primary-color);
+}
+
+/* Button styling */
+button {
+    background-color: var(--button-color);
+    color: var(--text-color);
+    padding: 10px 15px;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    font-size: 1rem;
+    transition: background-color 0.3s ease;
+}
+
+button:hover {
+    background-color: var(--button-hover-color);
+}
+
+button:disabled {
+    background-color: var(--secondary-color);
+    cursor: not-allowed;
+}
+
+/* Table styling */
+table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 10px;
+    font-size: 0.95rem;
+}
+
+thead {
+    background-color: var(--table-header-bg);
+    color: var(--table-header-text);
+}
+
+th,
+td {
+    text-align: left;
+    padding: 10px;
+    border: 1px solid var(--table-border-color);
+}
+
+tbody tr:hover {
+    background-color: var(--table-row-hover);
+}
+
+/* Download button styling */
+#download-state-report {
+    margin-bottom: 10px;
+    display: inline-block;
+    align-self: flex-start;
+}
+
+/* Responsive design */
+@media (max-width: 600px) {
+    .state-reports-container {
+        padding: 15px;
+    }
+
+    table {
+        font-size: 0.85rem;
+    }
+
+    button {
+        font-size: 0.9rem;
+        padding: 8px 12px;
+    }
+}
