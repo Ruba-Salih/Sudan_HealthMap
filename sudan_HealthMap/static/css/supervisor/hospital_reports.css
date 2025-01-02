@@ -1,0 +1,131 @@
+/* General container styling */
+.hospital-reports-container {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 20px;
+    background-color: #f9f9f9; /* Light background */
+    border-radius: 8px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+}
+
+/* Heading styles */
+.hospital-reports-container h1 {
+    text-align: center;
+    color: #333;
+    font-size: 2rem;
+    margin-bottom: 20px;
+}
+
+.hospital-reports-container h2 {
+    color: #333;
+    font-size: 1.5rem;
+    margin-top: 30px;
+    margin-bottom: 15px;
+}
+
+/* Form styles */
+#hospital-report-form {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 15px;
+    margin-bottom: 30px;
+}
+
+#hospital-report-form label {
+    font-size: 1rem;
+    font-weight: bold;
+    color: #333;
+}
+
+#hospital-report-form select {
+    padding: 10px;
+    font-size: 1rem;
+    border: 1px solid #ddd;
+    border-radius: 5px;
+    width: 250px;
+    background-color: #fff;
+    color: #333;
+}
+
+/*#hospital-report-form button {
+    padding: 10px 20px;
+    font-size: 1rem;
+    border: none;
+    border-radius: 5px;
+    background-color: #007BFF; /* Primary color */
+    /*color: white;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+}*/
+
+/*#hospital-report-form button:hover {
+    background-color: #0056b3; /* Darker shade */
+/*}*/
+
+/* Table styling */
+table {
+    width: 100%;
+    border-collapse: collapse;
+    margin: 20px 0;
+}
+
+table th, table td {
+    border: 1px solid #ddd;
+    text-align: center;
+    padding: 10px;
+    font-size: 0.95rem;
+    color: #333;
+}
+
+table th {
+    background-color: #007BFF; /* Primary color */
+    color: white;
+    font-weight: bold;
+}
+
+table tbody tr:nth-child(even) {
+    background-color: #f2f2f2;
+}
+
+table tbody tr:hover {
+    background-color: #f9f9f9;
+}
+
+/* Button styles for reports 
+#download-simple-report, #download-detailed-report {
+    display: inline-block;
+    margin: 10px 0;
+    padding: 10px 15px;
+    font-size: 0.9rem;
+    border: none;
+    border-radius: 5px;
+    background-color: #28A745; /* Success color */
+    /*color: white;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+}*/
+
+/*#download-simple-report:hover, #download-detailed-report:hover {
+    background-color: #218838; /* Darker shade */
+/*}*/
+
+/* Responsive Design */
+@media (max-width: 768px) {
+    .hospital-reports-container {
+        padding: 10px;
+    }
+
+    table {
+        font-size: 0.9rem;
+    }
+
+    #hospital-report-form {
+        flex-direction: column;
+        gap: 10px;
+    }
+
+    #hospital-report-form select {
+        width: 100%;
+    }
+}

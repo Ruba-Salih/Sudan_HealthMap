@@ -12,9 +12,11 @@
         <form id="add-hospital-form" onsubmit="addHospital(event)">
             <input type="text" id="name" placeholder="Hospital Name" autocomplete="organization" required>
             <br>
-            <select id="state" required></select>
+            <select id="state" required>
+                <option value="" disabled selected>Select State</option>
+            </select>
             <br>
-            <input type="text" id="username" placeholder="Username" autocomplete="username" required>
+            <input type="email" id="email" placeholder="Email" autocomplete="email" required>
             <br>
             <input type="password" id="password" placeholder="Password" autocomplete="new-password" required>
             <br>
@@ -41,7 +43,6 @@
     {% load static %}
     <script>
         const API_TOKEN = "{{ token }}"; // Dynamically inject the token from backend
-        console.log("Injected API_TOKEN:", API_TOKEN);
     </script>
     <script src="{% static 'js/supervisor/any.js' %}" defer></script>
 {% endblock %}

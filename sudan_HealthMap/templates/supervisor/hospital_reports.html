@@ -1,0 +1,54 @@
+{% extends 'base.html' %}
+
+{% load static %}
+
+{% block title %}Hospital Reports{% endblock %}
+
+{% block content %}
+<div class="hospital-reports-container">
+    <h1>Hospital Reports</h1>
+    <form id="hospital-report-form">
+        <label for="hospital">Select Hospital:</label>
+        <select id="hospital" required></select>
+        <button type="submit">View Report</button>
+    </form>
+
+    <div id="hospital-report">
+        <h2>Simple Report</h2>
+        <button id="download-simple-report">Download Report</button>
+        <table id="simple-report-table">
+            <thead>
+                <tr>
+                    <th>Disease</th>
+                    <th>Cases</th>
+                </tr>
+            </thead>
+            <tbody></tbody>
+        </table>
+    
+        <h2>Detailed Report</h2>
+        <button id="download-detailed-report">Download Report</button>
+        <table id="detailed-report-table">
+            <thead>
+                <tr>
+                    <th>Case Number</th>
+                    <th>Age</th>
+                    <th>Sex</th>
+                    <th>Blood Type</th>
+                    <th>Disease</th>
+                    <th>Status</th>
+                    <th>Main Symptom</th>
+                    <th>Season</th>
+                    <th>Date Reported</th>
+                </tr>
+            </thead>
+            <tbody></tbody>
+        </table>
+    </div>
+    
+</div>
+
+<link rel="stylesheet" href="{% static 'css/supervisor/hospital_reports.css' %}">
+<script>const API_TOKEN = "{{ token }}";</script>
+<script src="{% static 'js/supervisor/hospital_reports.js' %}" defer></script>
+{% endblock %}
