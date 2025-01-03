@@ -1,0 +1,164 @@
+/* General Container Styling */
+.container {
+    margin: 20px auto;
+    margin-left: 470px;
+    max-width: 800px;
+    padding: 20px;
+    background-color: #ffffff;
+    border-radius: 8px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    overflow: hidden;
+}
+
+/* Form Section */
+.form-container {
+    margin-bottom: 30px;
+    padding: 20px;
+    background-color: #f2f9f9;
+    border-radius: 8px;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+}
+
+.form-container h2 {
+    margin-bottom: 15px;
+    font-size: 20px;
+    font-weight: bold;
+    color: #008080;
+}
+
+.form-container label {
+    font-weight: bold;
+    margin-bottom: 5px;
+    display: inline-block;
+    color: #008080;
+}
+
+.form-container input[type="text"],
+.form-container textarea {
+    width: 97%;
+    padding: 10px;
+    margin-bottom: 15px;
+    border: 1px solid #bdc3c7;
+    border-radius: 4px;
+    font-size: 14px;
+}
+
+.form-container button {
+    color: #ffffff;
+    border: none;
+    padding: 10px 15px;
+    font-size: 14px;
+    border-radius: 4px;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+}
+
+
+
+/* List Section */
+.list-container {
+    padding: 20px;
+    background-color: #f2f9f9;
+    border-radius: 8px;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+}
+
+.list-container h2 {
+    margin-bottom: 15px;
+    font-size: 20px;
+    font-weight: bold;
+    color: #008080;
+}
+
+.list-container label {
+    font-weight: bold;
+    color: #008080;
+}
+
+.list-container form {
+    margin-bottom: 20px;
+}
+
+.list-container input[type="text"] {
+    padding: 10px;
+    border: 1px solid #bdc3c7;
+    border-radius: 4px;
+    font-size: 14px;
+    margin-right: 10px;
+    width: calc(100% - 110px);
+    display: inline-block;
+}
+
+.list-container button {
+    
+    color: #ffffff;
+    border: none;
+    padding: 10px;
+    font-size: 14px;
+    border-radius: 4px;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+}
+
+
+#disease-list {
+    list-style: none;
+    padding: 0;
+}
+
+#disease-list li {
+    padding: 10px;
+    border: 1px solid #bdc3c7;
+    border-radius: 4px;
+    margin-bottom: 10px;
+    background-color: #ffffff;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+#disease-list li:hover {
+    background-color: #f7f9fc;
+}
+
+#disease-list li button {
+
+    color: #ffffff;
+    border: none;
+    padding: 5px 10px;
+    font-size: 12px;
+    border-radius: 4px;
+    cursor: pointer;
+}
+
+
+/* Adjustments for Main Content with Sidebar */
+.main-content .container {
+    margin-left: 270px; /* Matches sidebar width */
+}
+
+@media (max-width: 768px) {
+    .main-content .container {
+        margin-left: 0;
+    }
+
+    .sidebar {
+        position: fixed;
+        width: 100%;
+        top: 0;
+        left: 0;
+    }
+
+}
+
+@media (max-width: 500px) {
+    .form-container input[type="text"],
+    .list-container input[type="text"] {
+        width: 100%;
+    }
+
+    .form-container button,
+    .list-container button {
+        width: 100%;
+    }
+}

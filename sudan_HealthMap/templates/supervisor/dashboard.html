@@ -4,17 +4,10 @@
 {% block title %}Supervisor Dashboard{% endblock %}
 
 {% block content %}
-<div class="dashboard-container">
-    <h1>Welcome to the Supervisor Dashboard</h1>
-    <ul class="dashboard-links">
-        <li><a href="/supervisor/manage-diseases/">Manage Diseases</a></li>
-        <li><a href="/supervisor/manage-hospitals/">Manage Hospitals</a></li>
-        <li><a href="/supervisor/manage-reports/">Manage Reports</a></li>
-    </ul>
-</div>
 
-<script>
-    const API_TOKEN = "{{ token }}"; // Dynamically inject token from the backend
-</script>
+{% include 'navbar.html' %}
+{% include 'disease_statistics/main_statistics.html' %}
+
+<script>const API_TOKEN = "{{ token }}"; </script>
 <script src="{% static 'js/supervisor/dashboard.js' %}" defer></script>
 {% endblock %}

@@ -60,7 +60,7 @@ function displayDiseases(diseases) {
     diseases.forEach((disease) => {
         const li = document.createElement("li");
         li.innerHTML = `
-            <strong>${disease.name}</strong>: ${disease.description}
+            <strong>Disease Name: ${disease.name}</strong> Description: ${disease.description}
             <div class="actions">
                 <button onclick="deleteDisease(${disease.id})">Delete</button>
                 <button onclick="showUpdateForm(${disease.id}, '${disease.name}', '${disease.description}')">Edit</button>

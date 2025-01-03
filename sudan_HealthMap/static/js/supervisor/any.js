@@ -182,7 +182,7 @@ function displayHospitals(hospitals) {
     hospitals.forEach((hospital) => {
         const li = document.createElement("li");
         li.innerHTML = `
-            <strong>${hospital.name}</strong>: ${hospital.state_name || "N/A"}
+            <strong>Hospital Name: ${hospital.name}</strong>State: ${hospital.state_name || "N/A"}
             <div class="actions">
                 <button onclick="deleteHospital(${hospital.id})">Delete</button>
                 <button onclick="showUpdateForm(${hospital.id}, '${hospital.name}', '${hospital.state}')">Edit</button>

@@ -1,0 +1,50 @@
+/* General Container Styling */
+.reports-container {
+    margin: 20px auto;
+    margin-left: 470px; /* Adjust based on sidebar width */
+    max-width: 800px;
+    padding: 20px;
+    background-color: #f2f9f9;
+    border-radius: 8px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    overflow: hidden;
+    text-align: center;
+}
+
+.reports-container h1 {
+    margin-bottom: 20px;
+    font-size: 24px;
+    font-weight: bold;
+    color: #269393;
+}
+
+/* Report Links */
+.report-links {
+    list-style: none;
+    padding: 0;
+    margin: 0 auto;
+    max-width: 400px;
+}
+
+.report-links li {
+    margin-bottom: 15px;
+}
+
+.report-links li a {
+    display: block;
+    padding: 10px 15px;
+    text-decoration: none;
+    font-size: 16px;
+    font-weight: bold;
+    color: #ffffff;
+    background-color: #269393;
+    border-radius: 4px;
+    text-align: center;
+    transition: background-color 0.3s ease, transform 0.2s ease;
+}
+
+.report-links li a:hover {
+    background-color: #005f5f;
+    transform: translateY(-3px);
+}
+

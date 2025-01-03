@@ -1,8 +1,14 @@
 {% extends 'base.html' %}
+{% load static %}
 
 {% block title %}Manage Diseases{% endblock %}
 
+{% block head %}
+<link rel="stylesheet" href="{% static 'css/supervisor/manage_diseases.css' %}">
+{% endblock %}
+
 {% block content %}
+{% include 'navbar.html' %}
 <div class="container">
     <h1>Manage Diseases</h1>
 
@@ -37,10 +43,9 @@
 {% endblock %}
 
 {% block scripts %}
-    {% load static %}
-    <script>
-        const API_TOKEN = "{{ token }}"; // Dynamically inject the token from the backend
-        console.log("Injected API_TOKEN:", API_TOKEN);
-    </script>
-    <script src="{% static 'js/supervisor/manage_diseases.js' %}" defer></script>
+<script>
+    const API_TOKEN = "{{ token }}";
+    console.log("Injected API_TOKEN:", API_TOKEN);
+</script>
+<script src="{% static 'js/supervisor/manage_diseases.js' %}" defer></script>
 {% endblock %}

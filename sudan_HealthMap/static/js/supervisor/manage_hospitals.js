@@ -1,3 +1,15 @@
+
+
+
+
+// not working
+
+
+
+
+
+
+
 console.log("manage_hospitals.js is executing.");
 const API_BASE_URL = "/supervisor/api/hospitals/"; // API for hospitals
 const STATES_API_URL = "/supervisor/api/states/"; // API for fetching states
@@ -75,7 +87,7 @@ function displayHospitals(hospitals) {
     hospitals.forEach((hospital) => {
         const li = document.createElement("li");
         li.innerHTML = `
-            <strong>${hospital.name}</strong>: ${hospital.state_name || "N/A"}
+            <strong>Hospital Name: ${hospital.name}</strong>State: ${hospital.state_name || "N/A"}
             <div class="actions">
                 <button onclick="deleteHospital(${hospital.id})">Delete</button>
                 <button onclick="showUpdateForm(${hospital.id}, '${hospital.name}', '${hospital.state}', '${hospital.address || ""}')">Edit</button>

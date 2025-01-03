@@ -4,7 +4,12 @@
 
 {% block title %}Hospital Reports{% endblock %}
 
+{% block head %}
+<link rel="stylesheet" href="{% static 'css/supervisor/hospital_reports.css' %}">
+{% endblock %}
+
 {% block content %}
+{% include 'navbar.html' %}
 <div class="hospital-reports-container">
     <h1>Hospital Reports</h1>
     <form id="hospital-report-form">
@@ -48,7 +53,6 @@
     
 </div>
 
-<link rel="stylesheet" href="{% static 'css/supervisor/hospital_reports.css' %}">
 <script>const API_TOKEN = "{{ token }}";</script>
 <script src="{% static 'js/supervisor/hospital_reports.js' %}" defer></script>
 {% endblock %}

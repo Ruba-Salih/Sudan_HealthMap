@@ -1,5 +1,3 @@
-{% extends 'base.html' %}
-
 {% load static %}
 
 {% block title %}
@@ -7,10 +5,12 @@ Disease Statistics
 {% endblock %}
 
 {% block content %}
-<h1 style="text-align: center;">Disease Statistics</h1>
-
+<div class="container">
+<h1 style="text-align: center;">Sudan Disease Statistics</h1>
+<br>
 <h2>Most Common Diseases</h2>
 <div class="table-container">
+    <p class="summary-text">This table provides a concise summary of the diseases alongside the number of reported cases, helping to identify trends and prioritize healthcare interventions.</p>
     <table id="common-diseases-table">
         <thead>
             <tr>
@@ -23,12 +23,19 @@ Disease Statistics
     </table>
 </div>
 
+<br>
+
 <h2>Disease Distribution</h2>
+<p class="summary-text">A visual representation of how various diseases are spreading across the population.</p>
 <div>
     <canvas id="diseaseDonutChart"></canvas>
 </div>
 
+<br>
+<br>
+
 <h2>Filter Disease Data</h2>
+<p class="summary-text">Explore detailed information about specific diseases. helps in understanding the demographics and distribution of diseases.</p>
 <div id="disease-filter-section" style="margin-top: 20px;">
     <label for="disease-dropdown" style="font-weight: bold;">Select Disease:</label>
     <select id="disease-dropdown" style="padding: 5px; font-size: 16px;">
@@ -54,18 +61,28 @@ Disease Statistics
     <p>Loading data, please wait...</p>
 </div>
 
-<h2>Filtered Data Chart</h2>
+<br>
+
+
+
 <div>
     <canvas id="filteredDataChart" style="margin-top: 20px;"></canvas>
 </div>
 
+<br>
+<hr>
+
 <h2>State-Level Disease Statistics</h2>
+
+<p class="summary-text">This section provides an overview of disease trends across different states. By selecting a state, you can access detailed statistics on diseases, including total reported cases and deaths.</p>
+
 <div style="margin-bottom: 20px;">
     <label for="state-dropdown" style="font-weight: bold;">Select a State:</label>
     <select id="state-dropdown" style="padding: 5px; font-size: 16px;">
         <option value="">--Select State--</option>
     </select>
 </div>
+<div class="table-container">
 <table id="state-disease-stats-table">
     <thead>
         <tr>
@@ -77,8 +94,13 @@ Disease Statistics
     <tbody>
     </tbody>
 </table>
+</div>
 
-<h2>Pie Chart of Diseases in States</h2>
+<br>
+
+<h2>State-Wise Disease Distribution Chart</h2>
+<p class="summary-text">A visual representation to  represents the prevalence of a selected disease across various states. By analyzing this chart, you can quickly identify regions with higher case counts, enabling targeted public health strategies and resource allocation.</p>
+
 <div style="margin-top: 20px;">
     <label for="disease-pie-dropdown" style="font-weight: bold;">Select Disease:</label>
     <select id="disease-pie-dropdown" style="padding: 5px; font-size: 16px;">
@@ -88,6 +110,8 @@ Disease Statistics
 
 <div>
     <canvas id="diseasePieChart" style="margin-top: 20px; max-width: 800px; max-height: 500px; margin: 0 auto;"></canvas>
+</div>
+
 </div>
 
 <link rel="stylesheet" href="{% static 'css/disease_statistics/main_statistics.css' %}">
