@@ -21,7 +21,7 @@ class DiseaseStatisticsAPIView(APIView):
     """
 
     def get(self, request, *args, **kwargs):
-        # Calculate statistics
+
         common_diseases, state_disease_stats, unique_states = calculate_disease_statistics()
 
         if common_diseases is None:

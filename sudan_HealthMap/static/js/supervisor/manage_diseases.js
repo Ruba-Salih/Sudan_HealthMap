@@ -1,5 +1,5 @@
 console.log("manage_diseases.js is executing.");
-const API_BASE_URL = "/supervisor/api/diseases/"; // API for diseases
+const API_BASE_URL = "/supervisor/api/diseases/";
 
 document.addEventListener("DOMContentLoaded", () => {
     if (typeof API_TOKEN === "undefined" || !API_TOKEN) {
@@ -9,7 +9,7 @@ document.addEventListener("DOMContentLoaded", () => {
     }
     console.log("DOM fully loaded and parsed.");
 
-    fetchDiseases(); // Fetch all diseases when the page loads
+    fetchDiseases();
 });
 
 // Helper function to get CSRF token
@@ -33,7 +33,7 @@ async function fetchDiseases() {
     try {
         const response = await fetch(API_BASE_URL, {
             headers: {
-                Authorization: `Token ${API_TOKEN}`, // Use Token Authentication
+                Authorization: `Token ${API_TOKEN}`,
             },
         });
         if (response.ok) {
@@ -88,8 +88,8 @@ async function addDisease(event) {
             method: "POST",
             headers: {
                 "Content-Type": "application/json",
-                Authorization: `Token ${API_TOKEN}`, // Use Token Authentication
-                "X-CSRFToken": csrfToken, // Include CSRF token
+                Authorization: `Token ${API_TOKEN}`,
+                "X-CSRFToken": csrfToken,
             },
             body: JSON.stringify({ name, description }),
         });
@@ -97,7 +97,7 @@ async function addDisease(event) {
         if (response.ok) {
             alert("Disease added successfully!");
             document.getElementById("add-disease-form").reset();
-            fetchDiseases(); // Refresh the disease list
+            fetchDiseases();
         } else {
             const errorData = await response.json();
             console.error("Error adding disease:", errorData);
@@ -118,14 +118,15 @@ async function deleteDisease(id) {
         const response = await fetch(`${API_BASE_URL}${id}/`, {
             method: "DELETE",
             headers: {
-                Authorization: `Token ${API_TOKEN}`, // Use Token Authentication
-                "X-CSRFToken": csrfToken, // Include CSRF token
+                Authorization: `Token ${API_TOKEN}`,
+                "X-CSRFToken": csrfToken,
             },
         });
 
         if (response.ok) {
             alert("Disease deleted successfully!");
-            fetchDiseases(); // Refresh the disease list
+            resetForm()
+            fetchDiseases();
         } else {
             console.error("Failed to delete disease:", response.statusText);
         }
@@ -161,15 +162,15 @@ function showUpdateForm(diseaseId, currentName, currentDescription) {
                 method: "PUT",
                 headers: {
                     "Content-Type": "application/json",
-                    Authorization: `Token ${API_TOKEN}`, // Use Token Authentication
-                    "X-CSRFToken": csrfToken, // Include CSRF token
+                    Authorization: `Token ${API_TOKEN}`,
+                    "X-CSRFToken": csrfToken,
                 },
                 body: JSON.stringify({ name: updatedName, description: updatedDescription }),
             });
 
             if (response.ok) {
                 alert("Disease updated successfully!");
-                fetchDiseases(); // Refresh the disease list
+                fetchDiseases();
                 resetForm();
             } else {
                 const errorData = await response.json();

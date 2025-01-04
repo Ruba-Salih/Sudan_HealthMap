@@ -30,12 +30,11 @@ def supervisor_login(request):
             login(request, user)
 
             token, _ = Token.objects.get_or_create(user=user)
-            request.session['api_token'] = token.key  # Store token in session
+            request.session['api_token'] = token.key
 
-            return redirect('supervisor_dashboard')  # Redirect to the dashboard
+            return redirect('supervisor_dashboard')
         else:
-            messages.error(request, "Invalid login credentials.")
-            return render(request, 'login.html')
+            return render(request, 'login.html', {'error': 'Invalid credentials'})
 
     return render(request, 'login.html')
 

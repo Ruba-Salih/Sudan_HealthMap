@@ -165,6 +165,7 @@ function deleteCase(caseId) {
         .then((response) => {
             if (response.ok) {
                 alert("Case deleted successfully!");
+                resetForm();
                 fetchAndDisplayCases();
             } else {
                 console.error("Error deleting case");
@@ -203,4 +204,10 @@ function editCase(caseId) {
             console.error("Error fetching case:", error);
             alert("Failed to fetch case for editing. Please try again.");
         });
+}
+
+// Reset the form to its default state
+function resetForm() {
+    const form = document.getElementById("manage-case-form");
+    form.reset();
 }

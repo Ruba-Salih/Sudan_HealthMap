@@ -1,6 +1,6 @@
 from rest_framework import serializers
 from disease.serializers import DiseaseSerializer
-from supervisor.serializers import HospitalSerializer, StateSerializer
+from supervisor.serializers import HospitalSerializer
 from case.serializers import CaseSerializer
 from .models import DiseaseStatistics
 

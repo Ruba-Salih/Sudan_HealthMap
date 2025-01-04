@@ -8,8 +8,7 @@
 {% include 'navbar.html' %}
 <h1>Welcome {{ hospital.name }}</h1>
 <p>State: {{ hospital.state }}</p>
+{% include 'disease_statistics/main_statistics.html' %}
 
-<ul>
-    <li><a href="/case/manage/">Manage Cases</a></li>
-</ul>
+<script>const API_TOKEN = "{{ token }}"; </script>
 {% endblock %}

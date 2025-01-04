@@ -83,15 +83,19 @@ REST_FRAMEWORK = {
     'DEFAULT_AUTHENTICATION_CLASSES': [
         'rest_framework.authentication.SessionAuthentication',
         'rest_framework.authentication.TokenAuthentication',
+        'hospital.hospital_tok.HospitalTokenAuthentication',
     ],
     'DEFAULT_PERMISSION_CLASSES': [
         'rest_framework.permissions.IsAuthenticated',
     ],
 }
 
+LOGIN_URL = '/hospital/login/'
+
 
 AUTHENTICATION_BACKENDS = [
     'supervisor.auth.SupervisorBackend',
+    'hospital.auth_backend.HospitalBackend',
     'django.contrib.auth.backends.ModelBackend',
 ]
 
