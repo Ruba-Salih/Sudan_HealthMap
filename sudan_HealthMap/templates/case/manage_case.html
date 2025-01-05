@@ -3,86 +3,102 @@
 
 {% block title %}Manage Cases{% endblock %}
 
+{% block head %}
+<link rel="stylesheet" href="{% static 'css/hospital/manage_case.css' %}">
+{% endblock %}
+
 {% block content %}
-<h1>Manage Cases</h1>
+{% include 'navbar.html' %}
 
-<!-- Add Case Form -->
-<h2>Add New Case</h2>
-<form id="manage-case-form" method="post">
-    {% csrf_token %}
-    <label for="disease">Disease:</label>
-    <select id="disease" name="disease" required>
-        {% for disease in diseases %}
-            <option value="{{ disease.id }}">{{ disease.name }}</option>
-        {% endfor %}
-    </select>
-    <br>
-    <label for="patient_number">Patient Number:</label>
-    <input type="text" id="patient_number" name="patient_number" required>
-    <br>
-    <label for="patient_age">Patient Age:</label>
-    <input type="number" id="patient_age" name="patient_age" required>
-    <br>
-    <label for="patient_sex">Patient Sex:</label>
-    <select id="patient_sex" name="patient_sex" required>
-        <option value="Male">Male</option>
-        <option value="Female">Female</option>
-        <option value="Other">Other</option>
-    </select>
-    <br>
-    <label for="patient_blood_type">Blood Type:</label>
-    <select id="patient_blood_type" name="patient_blood_type" required>
-        <option value="A+">A+</option>
-        <option value="A-">A-</option>
-        <option value="B+">B+</option>
-        <option value="B-">B-</option>
-        <option value="AB+">AB+</option>
-        <option value="AB-">AB-</option>
-        <option value="O+">O+</option>
-        <option value="O-">O-</option>
-    </select>
-    <br>
-    <label for="patient_status">Patient Status:</label>
-    <select id="patient_status" name="patient_status" required>
-        <option value="recovered">Recovered</option>
-        <option value="deceased">Deceased</option>
-        <option value="under_treatment">Under Treatment</option>
-    </select>
-    <br>
-    <label for="main_symptom_causing_death">Main Symptom (if deceased):</label>
-    <input type="text" id="main_symptom_causing_death" name="main_symptom_causing_death">
-    <br>
-    <label for="alive">
-        <input type="checkbox" id="alive" name="alive" checked> Alive
-    </label>
-    <br>
-    <label for="season">Season:</label>
-    <select id="season" name="season" required>
-        <option value="winter">Winter</option>
-        <option value="spring">Spring</option>
-        <option value="summer">Summer</option>
-        <option value="autumn">Autumn</option>
-    </select>
-    <br>
-    <button type="submit">Submit Case</button>
-</form>
-{% if errors %}
-    <ul style="color: red;">
-        {% for field, error in errors.items %}
-            <li>{{ field }}: {{ error|join:", " }}</li>
-        {% endfor %}
-    </ul>
-{% endif %}
+<div class="container">
+    <!-- Form Section -->
+    <h1>Manage Cases</h1>
+    <div class="form-container">
+        <h2>Add New Case</h2>
+        <form id="manage-case-form" method="post">
+            {% csrf_token %}
 
-<hr>
+            <label for="disease">Disease:</label>
+            <select id="disease" name="disease" required>
+                {% for disease in diseases %}
+                    <option value="{{ disease.id }}">{{ disease.name }}</option>
+                {% endfor %}
+            </select>
+            <label for="patient_number">Patient Number:</label>
+            <input type="text" id="patient_number" name="patient_number" required>
+            <label for="patient_age">Patient Age:</label>
+            <input type="number" id="patient_age" name="patient_age" required>
+            <label for="patient_sex">Patient Sex:</label>
+            <select id="patient_sex" name="patient_sex" required>
+                <option value="Male">Male</option>
+                <option value="Female">Female</option>
+                <option value="Other">Other</option>
+            </select>
+            <label for="patient_blood_type">Blood Type:</label>
+            <select id="patient_blood_type" name="patient_blood_type" required>
+                <option value="A+">A+</option>
+                <option value="A-">A-</option>
+                <option value="B+">B+</option>
+                <option value="B-">B-</option>
+                <option value="AB+">AB+</option>
+                <option value="AB-">AB-</option>
+                <option value="O+">O+</option>
+                <option value="O-">O-</option>
+            </select>
+            <label for="patient_status">Patient Status:</label>
+            <select id="patient_status" name="patient_status" required>
+                <option value="recovered">Recovered</option>
+                <option value="deceased">Deceased</option>
+                <option value="under_treatment">Under Treatment</option>
+            </select>
+            <label for="main_symptom_causing_death">Main Symptom (if deceased):</label>
+            <input type="text" id="main_symptom_causing_death" name="main_symptom_causing_death">
+            <label for="alive">
+                <input type="checkbox" id="alive" name="alive" checked> Alive
+            </label>
+            <label for="season">Season:</label>
+            <select id="season" name="season" required>
+                <option value="winter">Winter</option>
+                <option value="spring">Spring</option>
+                <option value="summer">Summer</option>
+                <option value="autumn">Autumn</option>
+            </select>
+            <button type="submit">Submit Case</button>
+        </form>
+        {% if errors %}
+            <ul style="color: red;">
+                {% for field, error in errors.items %}
+                    <li>{{ field }}: {{ error|join:", " }}</li>
+                {% endfor %}
+            </ul>
+        {% endif %}
+    </div>
 
-<!-- Search and List of Cases -->
-<h2>Search and Manage Cases</h2>
-<form id="search-case-form">
-    <input type="text" id="search-query" placeholder="Search cases by patient number or disease name">
-    <button type="submit">Search</button>
-</form>
-<ul id="case-list"></ul>
+    <!-- List Section -->
+    <div class="list-container">
+        <h2>Search and Manage Cases</h2>
+        <form id="search-case-form">
+            <input type="text" id="search-query" placeholder="Search cases by patient number or disease name">
+        </form>
+        <table id="case-table">
+            <thead>
+                <tr>
+                    <th>Patient Number</th>
+                    <th>Patient Age</th>
+                    <th>Patient Sex</th>
+                    <th>Blood Type</th>
+                    <th>Status</th>
+                    <th>Main Symptom</th>
+                    <th>Season</th>
+                    <th>Actions</th>
+                </tr>
+            </thead>
+            <tbody id="case-list">
+                <!-- Data will be dynamically loaded -->
+            </tbody>
+        </table>
+    </div>
+</div>
 {% endblock %}
 
 {% block scripts %}

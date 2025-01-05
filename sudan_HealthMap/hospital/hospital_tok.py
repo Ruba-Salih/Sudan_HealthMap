@@ -2,6 +2,9 @@ from django.db import models
 from rest_framework.authentication import BaseAuthentication
 from rest_framework.exceptions import AuthenticationFailed
 from .models import Hospital
+import logging
+logger = logging.getLogger(__name__)
+
 
 class HospitalToken(models.Model):
     hospital = models.OneToOneField(Hospital, on_delete=models.CASCADE)
@@ -23,13 +26,17 @@ class HospitalToken(models.Model):
 class HospitalTokenAuthentication(BaseAuthentication):
     def authenticate(self, request):
         auth_header = request.headers.get('Authorization')
+        logger.debug("Auth header: %s", auth_header)
+
         if not auth_header or not auth_header.startswith('Token '):
+            logger.debug("No Authorization header or incorrect format.")
             return None
 
         token_key = auth_header.split('Token ')[1]
         try:
             token = HospitalToken.objects.get(key=token_key)
-            # Return the associated hospital and None (no auth backend needed for custom)
+            logger.debug("Token valid for hospital: %s", token.hospital)
             return (token.hospital, None)
         except HospitalToken.DoesNotExist:
+            logger.debug("Invalid token.")
             raise AuthenticationFailed("Invalid token")

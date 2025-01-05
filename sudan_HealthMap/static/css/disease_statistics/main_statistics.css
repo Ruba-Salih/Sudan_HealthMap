@@ -19,14 +19,13 @@ h1 {
 h2 {
     margin-bottom: 15px;
     font-weight: bold;
-    color: #e9cfa5;
+    color: #333;
     text-align: center;
     margin: 20px 0;
 }
 
 /* Style for informative paragraph */
 .summary-text {
-    font-family: 'Arial', sans-serif;
     font-size: 16px;
     line-height: 1.6;
     color: #333;

@@ -10,5 +10,7 @@
 <p>State: {{ hospital.state }}</p>
 {% include 'disease_statistics/main_statistics.html' %}
 
-<script>const API_TOKEN = "{{ token }}"; </script>
+<script>const API_TOKEN = "{{ token }}"; 
+    console.log("Injected API_TOKEN:", API_TOKEN);
+</script>
 {% endblock %}

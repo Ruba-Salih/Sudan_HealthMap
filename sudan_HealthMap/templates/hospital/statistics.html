@@ -1,0 +1,131 @@
+{% extends 'base.html' %}
+
+{% load static %}
+
+{% block title %}Hospital Statistics{% endblock %}
+
+{% block head %}
+<link rel="stylesheet" href="{% static 'css/disease_statistics/hospital_statistics.css' %}">
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+{% endblock %}
+
+{% block content %}
+{% include 'navbar.html' %}
+<div class="statistics-container">
+    <h1>Hospital Statistics</h1>
+
+    <!-- Common Diseases -->
+    <section class="statistics-section">
+        <h2>Most Common Diseases</h2>
+        <p>These are the most frequently reported diseases at your hospital.</p>
+        <table id="common-diseases-table">
+            <thead>
+                <tr>
+                    <th>Disease</th>
+                    <th>Total Cases</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for disease in common_disease %}
+                <tr>
+                    <td>{{ disease.disease__name }}</td>
+                    <td>{{ disease.total_cases }}</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </section>
+
+    <!-- Diseases with Most Recoveries -->
+    <section class="statistics-section">
+        <h2>Diseases with Most Recoveries</h2>
+        <p>These diseases have the highest recovery rates at your hospital.</p>
+        <div class="chart-table-row">
+            <div class="table-container">
+                <table id="recovered-diseases-table">
+                    <thead>
+                        <tr>
+                            <th>Disease</th>
+                            <th>Recoveries</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for disease in recovered_disease %}
+                        <tr>
+                            <td>{{ disease.disease__name }}</td>
+                            <td>{{ disease.total_recovered }}</td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+            <div class="chart-container">
+                <canvas id="recovery-donut-chart"></canvas>
+            </div>
+        </div>
+    </section>
+
+    <!-- Diseases with Most Deaths -->
+    <section class="statistics-section">
+        <h2>Diseases with Most Deaths</h2>
+        <p>These diseases have the highest fatality rates at your hospital.</p>
+        <div class="chart-table-row">
+            <div class="table-container">
+                <table id="death-diseases-table">
+                    <thead>
+                        <tr>
+                            <th>Disease</th>
+                            <th>Deaths</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for disease in death_disease %}
+                        <tr>
+                            <td>{{ disease.disease__name }}</td>
+                            <td>{{ disease.total_deaths }}</td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+            <div class="chart-container">
+                <canvas id="death-donut-chart"></canvas>
+            </div>
+        </div>
+    </section>
+
+    <!-- Daily Stats -->
+    <section class="statistics-section">
+        <h2>Rate of Disease Spread</h2>
+        <p>Daily statistics showing the rate of increase or decrease in cases.</p>
+        <table id="daily-stats-table">
+            <thead>
+                <tr>
+                    <th>Date</th>
+                    <th>Disease</th>
+                    <th>New Cases</th>
+                    <th>Rate of Change</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for stat in daily_stats %}
+                <tr>
+                    <td>{{ stat.date_reported|date:"Y-m-d" }}</td>
+                    <td>{{ stat.disease__name }}</td>
+                    <td>{{ stat.daily_change|default:"-" }}</td>
+                    <td>{{ stat.rate_of_change|floatformat:2|default:"-" }}</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+        <canvas id="rate-line-chart"></canvas>
+    </section>
+</div>
+
+<script>
+    const API_TOKEN = "{{ api_token }}";
+    console.log("Injected API_TOKEN:", API_TOKEN);
+</script>
+<script src="{% static 'js/disease_statistics/hospital_statistics.js' %}"></script>
+
+{% endblock %}

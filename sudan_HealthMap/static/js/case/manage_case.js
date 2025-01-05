@@ -15,12 +15,13 @@ document.addEventListener("DOMContentLoaded", () => {
         alert("Authorization token is not provided. Please log in again.");
         return;
     }
+    const caseTableBody = document.getElementById("case-list");
 
     populateDiseaseDropdown();
     fetchAndDisplayCases();
     attachFormSubmitHandler();
     attachSearchHandler();
-});
+
 
 // Populate disease dropdown
 function populateDiseaseDropdown() {
@@ -117,7 +118,9 @@ function fetchAndDisplayCases(query = "") {
                 caseList.innerHTML = "<li>No cases found.</li>";
                 return;
             }
-
+            
+            caseTableBody.innerHTML = "";
+        
             cases
                 .filter(
                     (c) =>
@@ -125,15 +128,23 @@ function fetchAndDisplayCases(query = "") {
                         c.disease_name.toLowerCase().includes(query.toLowerCase())
                 )
                 .forEach((caseItem) => {
-                    const listItem = document.createElement("li");
-                    listItem.innerHTML = `
-                        Patient Number: ${caseItem.patient_number}, 
-                        Disease Name: ${caseItem.disease_name || "N/A"}, 
-                        Status: ${caseItem.patient_status}
-                        <button onclick="editCase(${caseItem.id})">Edit</button>
-                        <button onclick="deleteCase(${caseItem.id})">Delete</button>
+                    const row =  `
+                        <tr>
+                    <td>${caseItem.patient_number || "-"}</td>
+                    <td>${caseItem.patient_age || "-"}</td>
+                    <td>${caseItem.patient_sex || "-"}</td>
+                    <td>${caseItem.patient_blood_type || "-"}</td>
+                    <td>${caseItem.patient_status || "-"}</td>
+                    <td>${caseItem.main_symptom_causing_death || "-"}</td>
+                    <td>${caseItem.season || "-"}</td>
+                    <td>
+                        <button class="edit-button" data-id="${caseItem.id}">Edit</button>
+                        <br>
+                        <button class="delete-button" data-id="${caseItem.id}">Delete</button>
+                    </td>
+                </tr>
                     `;
-                    caseList.appendChild(listItem);
+                    caseTableBody.insertAdjacentHTML("beforeend", row);
                 });
         })
         .catch((error) => {
@@ -211,3 +222,5 @@ function resetForm() {
     const form = document.getElementById("manage-case-form");
     form.reset();
 }
+
+});

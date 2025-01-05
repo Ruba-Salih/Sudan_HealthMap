@@ -46,9 +46,7 @@ document.addEventListener('DOMContentLoaded', function () {
                     labels: diseaseLabels,
                     datasets: [{
                         data: diseaseCases.map(cases => ((cases / totalCases) * 100).toFixed(2)),
-                        backgroundColor: [
-                            '#FF6384', '#36A2EB', '#FFCE56', '#4BC0C0', '#9966FF', '#FF9F40'
-                        ]
+                        backgroundColor: ["#41beb4", "#e7b04b", "#d3d5c3", "#e1866b", "#988067"]
                     }]
                 },
                 options: {
@@ -178,10 +176,7 @@ document.addEventListener('DOMContentLoaded', function () {
                         datasets: [{
                             label: `Distribution of ${disease} cases by state`,
                             data: caseCounts,
-                            backgroundColor: [
-                                '#FF6384', '#36A2EB', '#FFCE56', '#4BC0C0', '#9966FF', '#FF9F40',
-                                '#E8A798', '#ADCEFA', '#B8E986', '#9B59B6'
-                            ],
+                            backgroundColor: ['#ffdb80', '#41beb4', '#ee7a44', '#ce8a4b', '#9966FF'],
                             borderWidth: 1
                         }]
                     },

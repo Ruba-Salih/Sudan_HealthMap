@@ -1,11 +1,73 @@
 from django.shortcuts import render
 from django.db.models import Count
+from django.contrib.auth.decorators import login_required
 from rest_framework.views import APIView
 from rest_framework.response import Response
+from rest_framework.permissions import IsAuthenticated
+from rest_framework.exceptions import AuthenticationFailed
 from rest_framework import status
-from .statistics import calculate_disease_statistics
+from hospital.hospital_tok import HospitalToken, HospitalTokenAuthentication
+from django.core.exceptions import PermissionDenied
+from .statistics import calculate_disease_statistics, calculate_hospital_statistics
 from case.models import Case
+from hospital.models import Hospital
+from django.http import JsonResponse
+import logging
+logger = logging.getLogger(__name__)
 
+
+def hospital_statistics_view(request):
+    """
+    View to render the Hospital Statistics template.
+    """
+    token_key = request.session.get('api_token') or request.headers.get('Authorization', '').split('Token ')[-1]
+
+    if not token_key:
+        raise PermissionDenied("No token provided. Please log in again.")
+    
+    try:
+            # Validate the token
+        hospital_token = HospitalToken.objects.get(key=token_key)
+    except HospitalToken.DoesNotExist:
+            raise PermissionDenied("Invalid token. Please log in again.")
+
+    return render(request, 'hospital/statistics.html', {'api_token': token_key})
+
+class HospitalStatisticsAPIView(APIView):
+    """
+    API endpoint to calculate and retrieve hospital statistics.
+    """
+    permission_classes = [IsAuthenticated]
+    authentication_classes = [HospitalTokenAuthentication]
+
+    def get(self, request, *args, **kwargs):
+        hospital = request.user  # The authenticated hospital
+        # Ensure hospital is not None
+        if not hospital:
+            raise AuthenticationFailed("Authentication failed.")
+        if not isinstance(hospital, Hospital):
+                return Response({"error": "Access denied. Only hospitals can view this endpoint."}, status=403)
+
+        # Calculate statistics
+        common, recovered, deaths, daily_stats = calculate_hospital_statistics(hospital)
+
+        response_data = {
+            'common_disease': common.to_dict(orient='records') if common is not None else [],
+            'recovered_disease': recovered.to_dict(orient='records') if recovered is not None else [],
+            'death_disease': deaths.to_dict(orient='records') if deaths is not None else [],
+            'daily_stats': daily_stats.to_dict(orient='records') if daily_stats is not None else [],
+        }
+
+        logger.debug("Response data: %s", response_data)
+
+        try:
+            return Response(response_data)
+        except ValueError as e:
+            print("Serialization error:", str(e))
+            return JsonResponse(
+                {"error": "Serialization error. Check for invalid values in data."},
+                status=500,
+            )
 
 def disease_statistics(request):
     """
