@@ -1,0 +1,49 @@
+{% extends 'base.html' %}
+
+{% load static %}
+
+{% block title %}Hospital Reports{% endblock %}
+
+{% block head %}
+<link rel="stylesheet" href="{% static 'css/hospital/manage_reports.css' %}">
+{% endblock %}
+
+{% block content %}
+{% include 'navbar.html' %}
+
+<div class="reports-container">
+    <h1>Hospital Reports</h1>
+
+    <form id="report-form" class="form-list">
+        <label for="disease-select">Select Disease:</label>
+        <select id="disease-select" required>
+            <option value="" disabled>-- Select Disease --</option>
+        </select>
+    </form>
+
+    <button id="download-report" style="display: none;">Download Report</button>
+
+    <br>
+
+    <table id="report-table">
+        <thead>
+            <tr>
+                <th>Patient Number</th>
+                <th>Age</th>
+                <th>Sex</th>
+                <th>Blood Type</th>
+                <th>Status</th>
+                <th>Symptom</th>
+                <th>Season</th>
+            </tr>
+        </thead>
+        <tbody></tbody>
+    </table>
+
+</div>
+<script>
+    const API_TOKEN = "{{ api_token }}";
+    console.log("Injected API_TOKEN from:", API_TOKEN);
+</script>
+<script src="{% static 'js/hospital/manage_reports.js' %}"></script>
+{% endblock %}

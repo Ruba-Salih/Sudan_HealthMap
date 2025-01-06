@@ -1,6 +1,8 @@
 from django.db import models
+from django.utils.timezone import now
 from state.models import State
 from supervisor.models import Supervisor
+
 
 class Hospital(models.Model):
     """
@@ -21,6 +23,11 @@ class Hospital(models.Model):
                                    related_name='supervised_hospitals')
     email = models.CharField(max_length=150, unique=True)
     password = models.CharField(max_length=128)
+    last_login = models.DateTimeField(default=now, blank=True, null=True)
+
+    @property
+    def is_authenticated(self):
+        return True
 
     def __str__(self):
         """

@@ -16,7 +16,6 @@ class CaseSerializer(serializers.ModelSerializer):
     def create(self, validated_data):
 
         user = self.context['request'].user
-        print(f"Logged-in User in Serializer: {user} ({user.role})")
 
         hospital = Hospital.objects.filter(email=user.email).first()
         print(f"Associated Hospital in Serializer: {hospital}")

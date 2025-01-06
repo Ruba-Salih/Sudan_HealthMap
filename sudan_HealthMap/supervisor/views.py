@@ -30,12 +30,11 @@ def supervisor_login(request):
             login(request, user)
 
             token, _ = Token.objects.get_or_create(user=user)
-            request.session['api_token'] = token.key  # Store token in session
+            request.session['api_token'] = token.key
 
-            return redirect('supervisor_dashboard')  # Redirect to the dashboard
+            return redirect('supervisor_dashboard')
         else:
-            messages.error(request, "Invalid login credentials.")
-            return render(request, 'login.html')
+            return render(request, 'login.html', {'error': 'Invalid credentials'})
 
     return render(request, 'login.html')
 
@@ -56,7 +55,7 @@ def home(request):
     """
     Simple home view for the application.
     """
-    return render(request, 'base.html')
+    return render(request, 'landing_page.html')
 
 @login_required
 def supervisor_dashboard(request):
@@ -67,7 +66,7 @@ def supervisor_dashboard(request):
     if not token:
         return redirect('supervisor_login')
 
-    return render(request, 'supervisor/dashboard.html', {'token': token})
+    return render(request,'supervisor/dashboard.html', {'token': token})
 
 def error_page(request):
     """
@@ -84,7 +83,6 @@ def manage_hospitals(request):
     if not token:
         return redirect('supervisor_login')
 
-    print(f"Generated Token: {token.key}")
     return render(request, 'supervisor/manage_hospitals.html', {'token': token})
 
 @login_required

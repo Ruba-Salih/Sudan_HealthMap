@@ -182,7 +182,7 @@ function displayHospitals(hospitals) {
     hospitals.forEach((hospital) => {
         const li = document.createElement("li");
         li.innerHTML = `
-            <strong>${hospital.name}</strong>: ${hospital.state_name || "N/A"}
+            <strong>Hospital Name: ${hospital.name}</strong>State: ${hospital.state_name || "N/A"}
             <div class="actions">
                 <button onclick="deleteHospital(${hospital.id})">Delete</button>
                 <button onclick="showUpdateForm(${hospital.id}, '${hospital.name}', '${hospital.state}')">Edit</button>
@@ -209,6 +209,7 @@ async function deleteHospital(hospitalId) {
 
         if (response.ok) {
             alert("Hospital deleted successfully!");
+            resetForm()
             fetchHospitals();
         } else {
             console.error("Failed to delete hospital:", response.statusText);
@@ -279,8 +280,8 @@ function showUpdateForm(hospitalId, currentName, currentState) {
 
 // Reset the form and toggle buttons
 function resetForm() {
-    const nameField = document.getElementById("name");
-    const stateField = document.getElementById("state");
+    const nameField = document.getElementById("name").value = "";
+    const stateField = document.getElementById("state").value = "";
 
     if (nameField) nameField.value = "";
     if (stateField) stateField.value = "";

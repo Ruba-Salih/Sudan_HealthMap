@@ -1,0 +1,115 @@
+/* General Container Styling */
+.container {
+    margin: 20px auto;
+    margin-left: 470px;
+    max-width: 800px;
+    padding: 20px;
+    background-color: #ffffff;
+    border-radius: 8px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    overflow: hidden;
+}
+
+/* Form Section */
+.form-container {
+    margin-bottom: 30px;
+    padding: 20px;
+    background-color: #f2f9f9;
+    border-radius: 8px;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+}
+
+.form-container h2 {
+    margin-bottom: 15px;
+    font-size: 20px;
+    font-weight: bold;
+    color: #008080;
+}
+
+.form-container input[type="text"],
+.form-container input[type="email"],
+.form-container input[type="password"],
+.form-container select {
+    width: 97%;
+    padding: 10px;
+    margin-bottom: 15px;
+    border: 1px solid #bdc3c7;
+    border-radius: 4px;
+    font-size: 14px;
+}
+
+.form-container button {
+    color: #ffffff;
+    border: none;
+    padding: 10px 15px;
+    font-size: 14px;
+    border-radius: 4px;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+}
+
+
+/* List Section */
+.list-container {
+    padding: 20px;
+    background-color: #f2f9f9;
+    border-radius: 8px;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+}
+
+.list-container h2 {
+    margin-bottom: 15px;
+    font-size: 20px;
+    font-weight: bold;
+    color: #008080;
+}
+
+.list-container input[type="text"] {
+    padding: 10px;
+    border: 1px solid #bdc3c7;
+    border-radius: 4px;
+    font-size: 14px;
+    margin-right: 10px;
+    width: calc(100% - 110px);
+    display: inline-block;
+}
+
+.list-container button {
+    color: #ffffff;
+    border: none;
+    padding: 10px;
+    font-size: 14px;
+    border-radius: 4px;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+}
+
+/* Hospital List Styling */
+#hospital-list {
+    list-style: none;
+    padding: 0;
+}
+
+#hospital-list li {
+    padding: 10px;
+    border: 1px solid #bdc3c7;
+    border-radius: 4px;
+    margin-bottom: 10px;
+    background-color: #ffffff;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+#hospital-list li:hover {
+    background-color: #f7f9fc;
+}
+
+#hospital-list li button {
+    color: #ffffff;
+    border: none;
+    padding: 5px 10px;
+    font-size: 12px;
+    border-radius: 4px;
+    cursor: pointer;
+}

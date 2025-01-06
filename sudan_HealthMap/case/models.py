@@ -21,7 +21,7 @@ class Case(models.Model):
 
     disease = models.ForeignKey(Disease, on_delete=models.CASCADE)
     hospital = models.ForeignKey(Hospital, on_delete=models.CASCADE)
-    patient_number = models.PositiveIntegerField(unique=True)
+    patient_number = models.IntegerField()
     patient_age = models.PositiveIntegerField()
     patient_sex = models.CharField(max_length=10)
     patient_blood_type = models.CharField(max_length=3)
@@ -30,6 +30,14 @@ class Case(models.Model):
     alive = models.BooleanField(default=True)
     season = models.CharField(max_length=10, choices=season_choices)
     date_reported = models.DateField(auto_now_add=True)
+
+    class Meta:
+        """
+        To ensures the combination of hospital and patient_number is unique.
+        """
+        constraints = [
+            models.UniqueConstraint(fields=['hospital', 'patient_number'], name='unique_patient_number_per_hospital')
+        ]
 
     def __str__(self):
         """

@@ -1,50 +1,121 @@
-/* Center the donut chart */
+/* General Container Styling */
+.container {
+    margin: 0px auto;
+    margin-left: 300px;
+    max-width: 1200px;
+    padding: 20px;
+    background-color: #ffffff;
+    border-radius: 8px;
+    /*box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);*/
+   
+    
+}
+
+.statistics-section{
+    margin-bottom: 40px;
+    padding: 20px;
+    max-width: 1000px;
+    margin: 20px auto;
+    border-radius: 8px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+}
+
+h1 {
+    margin-bottom: 10px;
+    margin-top: -40px;
+    font-weight: bold;
+    color: #008080;
+}
+
+h2 {
+    margin-bottom: 15px;
+    font-weight: bold;
+    color: #333;
+    text-align: center;
+    margin: 20px 0;
+}
+
+/* Style for informative paragraph */
+.summary-text {
+    font-size: 16px;
+    line-height: 1.6;
+    color: #333;
+    text-align: center;
+    margin: 10px 0 20px 0;
+    max-width: 800px;
+    margin-left: auto;
+    margin-right: auto;
+    font-style: italic;
+    padding: 1px;
+}
+
+
+/* Donut chart */
 #diseaseDonutChart {
     display: block;
     margin: 0 auto;
-    max-width: 700px; /* Adjusted size */
-    max-height: 700px; /* Adjusted size */
+    max-width: 900px;
+    max-height: 800px;
+    padding: 10px;
 }
 
-/* Larger size for the bar chart container */
+
+/* Bar chart container */
 #filteredDataChart {
     display: block;
     margin: 20px auto;
-    width: 800px; /* Explicit width */
-    height: 400px; /* Explicit height */
+    width: 800px; 
+    height: 400px;
     padding: 10px;
-    background-color: #f9f9f9;
     border: 1px solid #ddd;
+    background-color: #f9f9f9;
     border-radius: 5px;
     box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
 }
 
-/* Adjust table and spacing */
+#seasonalChart{
+    margin-left: 90px;
+}
+
+
+/* Table and spacing */
 table {
     width: 80%;
     margin: 20px auto;
+    overflow-x: auto;
     border-collapse: collapse;
+    border-radius: 8px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    padding: 15px;
 }
 
-table th, table td {
+table th{
+    background-color: #40a0a0;
+    font-weight: bold;
+    color: white;
+}
+
+table td {
     border: 1px solid #ddd;
     text-align: center;
     padding: 8px;
 }
 
-h2 {
-    text-align: center;
-    margin: 20px 0;
+table tbody tr:nth-child(even) {
+    background-color: #f9f9f9;
+}
+
+table tbody tr:hover {
+    background-color: #f1f1f1;
 }
 
 /* Style for the scrollable table container */
 .table-container {
     max-height: 500px;
     overflow-y: auto;
-    border: 1px solid #ddd;
+    border: 0px solid #ddd;
     border-radius: 4px;
     margin: 20px auto;
-    width: 80%;
 }
 
 /* Table styles */
@@ -63,3 +134,10 @@ th, td {
 tbody tr:nth-child(even) {
     background-color: #f9f9f9;
 }
+
+/*.chart-table-row{
+    display: flex;
+    justify-content: center;
+    align-items: flex-start;
+    margin-top: 20px;
+}*/

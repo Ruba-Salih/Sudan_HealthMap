@@ -2,7 +2,14 @@
 
 {% block title %}Manage Hospitals{% endblock %}
 
+{% load static %}
+
+{% block head %}
+<link rel="stylesheet" href="{% static 'css/supervisor/manage_hospitals.css' %}">
+{% endblock %}
+
 {% block content %}
+{% include 'navbar.html' %}
 <div class="container">
     <h1>Manage Hospitals</h1>
 
@@ -41,8 +48,6 @@
 
 {% block scripts %}
     {% load static %}
-    <script>
-        const API_TOKEN = "{{ token }}"; // Dynamically inject the token from backend
-    </script>
+    <script>const API_TOKEN = "{{ token }}"; </script>
     <script src="{% static 'js/supervisor/any.js' %}" defer></script>
 {% endblock %}

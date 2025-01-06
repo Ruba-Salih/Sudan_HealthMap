@@ -4,7 +4,12 @@
 
 {% block title %}State Reports{% endblock %}
 
+{% block head %}
+<link rel="stylesheet" href="{% static 'css/supervisor/state_reports.css' %}">
+{% endblock %}
+
 {% block content %}
+{% include 'navbar.html' %}
 <div class="state-reports-container">
     <h1>State Reports</h1>
     <form id="state-report-form">
@@ -14,7 +19,6 @@
     </form>
 
     <div id="state-report">
-        <h2>State Report</h2>
         <button id="download-state-report" class="btn-secondary">Download Report</button>
         <table id="state-report-table">
             <thead>
@@ -29,7 +33,6 @@
     </div>
 </div>
 
-<link rel="stylesheet" href="{% static 'css/supervisor/state_reports.css' %}">
 <script>const API_TOKEN = "{{ token }}";console.log("API Token:", API_TOKEN);</script>
 <script src="{% static 'js/supervisor/state_reports.js' %}" defer></script>
 {% endblock %}

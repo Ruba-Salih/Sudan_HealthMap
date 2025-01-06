@@ -1,23 +1,25 @@
 /* General container styling */
 .hospital-reports-container {
-    max-width: 1200px;
-    margin: 0 auto;
+    max-width: 1000px;
+    margin: 20 auto;
+    margin-left: 380px;
     padding: 20px;
-    background-color: #f9f9f9; /* Light background */
+    background-color: #ffffff; /* Light background */
     border-radius: 8px;
     box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    overflow: hidden;
 }
 
 /* Heading styles */
 .hospital-reports-container h1 {
     text-align: center;
-    color: #333;
+    color: #008080;
     font-size: 2rem;
     margin-bottom: 20px;
 }
 
 .hospital-reports-container h2 {
-    color: #333;
+    color: #008080;
     font-size: 1.5rem;
     margin-top: 30px;
     margin-bottom: 15px;
@@ -79,7 +81,7 @@ table th, table td {
 }
 
 table th {
-    background-color: #007BFF; /* Primary color */
+    background-color: #40a0a0; /* Primary color */
     color: white;
     font-weight: bold;
 }

@@ -13,18 +13,12 @@ from .models import Case
 from .serializers import CaseSerializer
 from disease.models import Disease
 from hospital.models import Hospital
+from hospital.hospital_tok import HospitalToken, HospitalTokenAuthentication
 
 
 @login_required
 def manage_case(request):
-    # Debugging: Log the logged-in user information
-    print(f"Logged-in User: {request.user}, Role: {request.user.role}, Email: {request.user.email}")
 
-    # Ensure the logged-in user is a hospital
-    if request.user.role != 'hospital':
-        return render(request, 'error.html', {'message': 'Access denied. Only hospitals can manage cases.'})
-
-    # Fetch the hospital associated with the logged-in user by email
     try:
         hospital = Hospital.objects.get(email=request.user.email)
         print(f"Associated Hospital: {hospital.name}")
@@ -32,7 +26,7 @@ def manage_case(request):
         return render(request, 'error.html', {'message': 'No hospital found for the logged-in user.'})
 
     # Generate or retrieve the token for the authenticated user
-    token, _ = Token.objects.get_or_create(user=request.user)
+    token, _ = HospitalToken.objects.get_or_create(hospital=request.user)
 
     diseases = Disease.objects.all()
 
@@ -63,18 +57,13 @@ def manage_case(request):
 class CaseAPIView(APIView):
 
     permission_classes = [IsAuthenticated]
-    authentication_classes = [TokenAuthentication]
+    authentication_classes = [HospitalTokenAuthentication]
 
     def get(self, request, pk=None):
         """
         Retrieve all cases for the authenticated hospital or a specific case if `pk` is provided.
         """
-        user = request.user
-        if user.role != 'hospital':
-            return Response({"error": "Access denied. Only hospitals can view cases."}, status=403)
-
-        # Fetch the associated hospital
-        hospital = Hospital.objects.filter(email=user.email).first()
+        hospital = self.get_hospital(request.user)
         if not hospital:
             return Response({"error": "No hospital found for the logged-in user."}, status=403)
 
@@ -103,32 +92,20 @@ class CaseAPIView(APIView):
         """
         Helper method to retrieve the associated hospital for the logged-in user.
         """
-        if user.role == 'hospital':
-            try:
-                return Hospital.objects.get(email=user.email)
-            except Hospital.DoesNotExist:
-                return None
-        return None
+
+        try:
+            return Hospital.objects.get(email=user.email)
+        except Hospital.DoesNotExist:
+            return None
+
 
     def post(self, request):
         """
         Create a new case for the authenticated hospital.
         """
-        user = request.user
- 
-        print(f"Logged-in User post: {user} ({user.role})")
-        try:
-            if user.role == 'hospital':
-                hospital = Hospital.objects.filter(email=user.email).first()
-            else:
-                hospital = user.supervised_hospitals.first()
-
-            print(f"Associated Hospital in POST: {hospital}")
-            if not hospital:
-                return Response({"error": "You are not associated with a hospital."}, status=403)
-        except Exception as e:
-            print(f"Error fetching hospital: {e}")
-            return Response({"error": "Error fetching hospital association."}, status=500)
+        hospital = self.get_hospital(request.user)
+        if not hospital:
+            return Response({"error": "You are not associated with a hospital."}, status=403)
 
         data = request.data.copy()
         
@@ -149,14 +126,10 @@ class CaseAPIView(APIView):
         """
         Update a specific case for the authenticated hospital.
         """
-        user = request.user
-        print(f"Logged-in User PUT: {user} ({user.role})")
-        print(f"PUT Data Received: {request.data}")
-
-        hospital = self.get_hospital(user)
+        hospital = self.get_hospital(request.user)
         if not hospital:
             return Response({"error": "No associated hospital found."}, status=403)
-
+    
         try:
             case = Case.objects.get(pk=pk, hospital=hospital)
         except Case.DoesNotExist:
@@ -174,9 +147,7 @@ class CaseAPIView(APIView):
         """
         Delete a specific case for the authenticated hospital.
         """
-        user = request.user
-        print(f"Logged-in User DELETE: {user} ({user.role})")
-        hospital = self.get_hospital(user)
+        hospital = self.get_hospital(request.user)
         if not hospital:
             return Response({"error": "No associated hospital found."}, status=403)
 
