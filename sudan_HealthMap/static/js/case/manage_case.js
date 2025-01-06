@@ -147,7 +147,7 @@ document.addEventListener("DOMContentLoaded", () => {
                 document.querySelectorAll(".edit-button").forEach((button) =>
                     button.addEventListener("click", () => {
                         const caseId = button.dataset.id;
-                        editCase(caseId);
+                        updateCase(caseId);
                     })
                 );
 
@@ -200,8 +200,8 @@ document.addEventListener("DOMContentLoaded", () => {
             });
     }
 
-    // Edit a case
-    function editCase(caseId) {
+    // Update a case
+    function updateCase(caseId) {
     
         fetch(`${API_ENDPOINTS.cases}${caseId}/`, {
             headers: {

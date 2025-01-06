@@ -39,8 +39,17 @@ h1{
 
 .form-container input[type="text"],
 .form-container input[type="number"],
-.form-container textarea, select {
+.form-container textarea {
     width: 97%;
+    padding: 10px;
+    margin-bottom: 15px;
+    border: 1px solid #bdc3c7;
+    border-radius: 4px;
+    font-size: 14px;
+}
+
+.form-container select {
+    width: 100%;
     padding: 10px;
     margin-bottom: 15px;
     border: 1px solid #bdc3c7;
@@ -59,29 +68,11 @@ h1{
 }
 
 
-
-/* List Section */
-.list-container {
-    padding: 20px;
-    background-color: #f2f9f9;
-    border-radius: 8px;
-    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
-}
-
 .list-container h2 {
     margin-bottom: 15px;
     font-size: 20px;
     font-weight: bold;
     color: #008080;
-}
-
-.list-container label {
-    font-weight: bold;
-    color: #008080;
-}
-
-.list-container form {
-    margin-bottom: 20px;
 }
 
 .list-container input[type="text"] {
@@ -94,16 +85,7 @@ h1{
     display: inline-block;
 }
 
-.list-container button {
-    
-    color: #ffffff;
-    border: none;
-    padding: 10px;
-    font-size: 14px;
-    border-radius: 4px;
-    cursor: pointer;
-    transition: background-color 0.3s ease;
-}
+
 
 
 /* tablllllll*/
@@ -135,10 +117,11 @@ h1{
 }
 
 .edit-button, .delete-button {
-    padding: 5px 10px;
-    margin-bottom: 20px;
+    padding: 10px;
+    margin-bottom: 10px;
     font-size: 12px;
-    border: none;
+    width: 56px;
+    border: 7px;
     border-radius: 4px;
     cursor: pointer;
     color: #ffffff;

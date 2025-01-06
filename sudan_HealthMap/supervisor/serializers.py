@@ -35,7 +35,6 @@ class HospitalSerializer(serializers.ModelSerializer):
         if password:
             hospital.password = make_password(password)
 
-        # Save the hospital object
         hospital.save()
 
         return hospital
