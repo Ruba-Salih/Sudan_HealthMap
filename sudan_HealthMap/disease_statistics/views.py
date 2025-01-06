@@ -83,8 +83,8 @@ class DiseaseStatisticsAPIView(APIView):
     """
 
     def get(self, request, *args, **kwargs):
-
-        common_diseases, state_disease_stats, unique_states = calculate_disease_statistics()
+        # Fetch common diseases, state statistics, and unique states
+        common_diseases, state_disease_stats, unique_states, seasonal_stats = calculate_disease_statistics()
 
         if common_diseases is None:
             return Response(
@@ -96,11 +96,23 @@ class DiseaseStatisticsAPIView(APIView):
         common_diseases_data = common_diseases.to_dict('records')
         state_disease_stats_data = state_disease_stats.to_dict('records')
 
+        # Format seasonal statistics
+        seasonal_data = {}
+        for _, row in seasonal_stats.iterrows():
+            season = row['season']
+            if season not in seasonal_data:
+                seasonal_data[season] = []
+            seasonal_data[season].append({
+                "disease": row['disease__name'],
+                "total_cases": row['total_cases']
+            })
+
         # Build API response
         response_data = {
             "common_diseases": common_diseases_data,
             "state_disease_stats": state_disease_stats_data,
             "unique_states": unique_states,
+            "seasonal_stats": seasonal_data,
         }
 
         return Response(response_data, status=status.HTTP_200_OK)

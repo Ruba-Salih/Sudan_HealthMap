@@ -8,7 +8,10 @@ Disease Statistics
 <div class="container">
 <h1 style="text-align: center;">Sudan Disease Statistics</h1>
 <br>
+<section class="statistics-section">
+
 <h2>Most Common Diseases</h2>
+<div class="chart-table-row">
 <div class="table-container">
     <p class="summary-text">This table provides a concise summary of the diseases alongside the number of reported cases, helping to identify trends and prioritize healthcare interventions.</p>
     <table id="common-diseases-table">
@@ -30,10 +33,11 @@ Disease Statistics
 <div>
     <canvas id="diseaseDonutChart"></canvas>
 </div>
+</div>
+</section>
 
 <br>
-<br>
-
+<section class="statistics-section">
 <h2>Filter Disease Data</h2>
 <p class="summary-text">Explore detailed information about specific diseases. helps in understanding the demographics and distribution of diseases.</p>
 <div id="disease-filter-section" style="margin-top: 20px;">
@@ -63,15 +67,14 @@ Disease Statistics
 
 <br>
 
-
-
 <div>
     <canvas id="filteredDataChart" style="margin-top: 20px;"></canvas>
 </div>
+</section>
 
 <br>
-<hr>
 
+<section class="statistics-section">
 <h2>State-Level Disease Statistics</h2>
 
 <p class="summary-text">This section provides an overview of disease trends across different states. By selecting a state, you can access detailed statistics on diseases, including total reported cases and deaths.</p>
@@ -111,6 +114,17 @@ Disease Statistics
 <div>
     <canvas id="diseasePieChart" style="margin-top: 20px; max-width: 800px; max-height: 500px; margin: 0 auto;"></canvas>
 </div>
+</section>
+
+<section class="statistics-section">
+<h2>Seasonal Disease Distribution</h2>
+<p class="summary-text">
+    This chart shows the prevalence of various diseases across different seasons, helping to identify seasonal trends.
+</p>
+<div>
+    <canvas id="seasonalChart" style="margin-top: 20px; max-width: 800px; max-height: 500px;"></canvas>
+</div>
+</section>
 
 </div>
 

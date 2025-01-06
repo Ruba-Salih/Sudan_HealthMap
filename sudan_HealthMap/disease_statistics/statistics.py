@@ -8,7 +8,7 @@ from state.models import State
 def calculate_disease_statistics():
     queryset = (
         Case.objects.select_related('disease', 'hospital')
-        .values('disease__name', 'hospital__state__name', 'hospital__name')  # Use hospital__state__name
+        .values('disease__name', 'hospital__state__name', 'hospital__name', 'season')  # Include season
         .annotate(
             total_cases=Count('id'),  # Total number of cases for this disease
             total_deaths=Count('id', filter=Q(patient_status='deceased'))  # Total deaths for this disease
@@ -19,7 +19,7 @@ def calculate_disease_statistics():
     df = pd.DataFrame(list(queryset))
 
     if df.empty:
-        return None, None, None
+        return None, None, None, None
 
     # Aggregating statistics
     # 1. Most common diseases
@@ -40,12 +40,22 @@ def calculate_disease_statistics():
         .reset_index()
     )
 
+    # 3. Seasonal disease distribution
+    seasonal_disease_stats = (
+        df.groupby(['season', 'disease__name'])
+        .agg(
+            total_cases=('total_cases', 'sum')
+        )
+        .reset_index()
+        .sort_values(by=['season', 'total_cases'], ascending=[True, False])
+    )
+
     # Fetch unique states using the StateSerializer
     states = State.objects.all()
     serializer = StateSerializer(states, many=True)
     unique_states = serializer.data  # Serialized state data
 
-    return common_diseases, state_disease_stats, unique_states
+    return common_diseases, state_disease_stats, unique_states, seasonal_disease_stats
 
 def calculate_hospital_statistics(hospital):
     """

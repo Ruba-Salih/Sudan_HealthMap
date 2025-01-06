@@ -2,16 +2,27 @@
 .container {
     margin: 0px auto;
     margin-left: 300px;
-    max-width: 1500px;
+    max-width: 1200px;
     padding: 20px;
     background-color: #ffffff;
     border-radius: 8px;
     /*box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);*/
-    overflow: hidden;
+   
+    
+}
+
+.statistics-section{
+    margin-bottom: 40px;
+    padding: 20px;
+    max-width: 1000px;
+    margin: 20px auto;
+    border-radius: 8px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
 }
 
 h1 {
-    margin-bottom: 15px;
+    margin-bottom: 10px;
+    margin-top: -40px;
     font-weight: bold;
     color: #008080;
 }
@@ -48,6 +59,7 @@ h2 {
     padding: 10px;
 }
 
+
 /* Bar chart container */
 #filteredDataChart {
     display: block;
@@ -61,9 +73,12 @@ h2 {
     box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
 }
 
-/* Adjust table and spacing */
+#seasonalChart{
+    margin-left: 90px;
+}
 
 
+/* Table and spacing */
 table {
     width: 80%;
     margin: 20px auto;
@@ -119,3 +134,10 @@ th, td {
 tbody tr:nth-child(even) {
     background-color: #f9f9f9;
 }
+
+/*.chart-table-row{
+    display: flex;
+    justify-content: center;
+    align-items: flex-start;
+    margin-top: 20px;
+}*/

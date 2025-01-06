@@ -1,5 +1,4 @@
 document.addEventListener('DOMContentLoaded', function () {
-    console.log("Script Loaded");
 
     const diseaseDropdown = document.getElementById('disease-dropdown');
     const filterCategory = document.getElementById('filter-category');
@@ -7,10 +6,14 @@ document.addEventListener('DOMContentLoaded', function () {
     const filteredDataChartCtx = document.getElementById('filteredDataChart').getContext('2d');
     let filteredDataChart;
 
-    fetch('/statistics/api/statistics/')
+    fetch('/statistics/api/statistics/', {
+        headers: {
+            'Authorization': `Token ${API_TOKEN}`
+        }
+    })
+    
         .then(response => response.json())
         .then(data => {
-            console.log("Fetched Data:", data);
 
             // Validate data structure
             if (!data.common_diseases || !data.unique_states) {
@@ -18,6 +21,8 @@ document.addEventListener('DOMContentLoaded', function () {
                 alert("Error loading data. Please try again later.");
                 return;
             }
+
+            updateSeasonalChart(data.seasonal_stats);
 
             // Populate Common Diseases Table
             const commonDiseasesTableBody = document.querySelector('#common-diseases-table tbody');
@@ -93,7 +98,18 @@ document.addEventListener('DOMContentLoaded', function () {
                 stateDropdown.appendChild(option);
             });
 
-            // Handle State Selection
+            // Set default state
+            const defaultStateOption = [...stateDropdown.options].find(
+                option => option.value.toLowerCase() === defaultState.toLowerCase()
+            );
+            if (defaultStateOption) {
+                defaultStateOption.selected = true;
+                loadStateStatistics(defaultStateOption.value);
+            } else {
+                    console.warn(`Default state "${defaultState}" not found in the dropdown.`);
+            }
+
+            // State Selection
             stateDropdown.addEventListener('change', function () {
                 loadStateStatistics(this.value);
             });
@@ -129,9 +145,6 @@ document.addEventListener('DOMContentLoaded', function () {
                     });
                 }
             }
-
-            // Initialize State-Level Disease Statistics with Default State
-            loadStateStatistics(defaultState);
 
             // Populate Disease Dropdown for Pie Chart and Set Default Disease
             const diseasePieDropdown = document.getElementById('disease-pie-dropdown');
@@ -199,7 +212,7 @@ document.addEventListener('DOMContentLoaded', function () {
             });
 
 
-            // Bar Chart: Update on "Show Results" button click
+            // Bar Chart button click
             function updateFilteredChart(disease, category) {
                 if (!disease || !category) {
                     alert("Please select both a disease and a filter category.");
@@ -262,6 +275,76 @@ document.addEventListener('DOMContentLoaded', function () {
                         });
                     })
                     .catch(error => console.error('Error fetching filtered data:', error));
+            }
+
+            function updateSeasonalChart(seasonalStats) {
+                const labels = Object.keys(seasonalStats);
+                const datasets = [];
+
+                const allDiseases = [...new Set(labels.flatMap(season => seasonalStats[season].map(item => item.disease)))];
+
+                allDiseases.forEach(disease => {
+                    const data = labels.map(season => {
+                        const entry = seasonalStats[season].find(item => item.disease === disease);
+                        return entry ? entry.total_cases : 0;
+                    });
+
+                    datasets.push({
+                        label: disease,
+                        data: data,
+                        backgroundColor: randomColor(),
+                        borderColor: randomColor(),
+                        borderWidth: 1
+                    });
+                });
+
+                const seasonalChartCtx = document.getElementById("seasonalChart").getContext("2d");
+                new Chart(seasonalChartCtx, {
+                    type: "bar",
+                    data: {
+                        labels: labels,
+                        datasets: datasets
+                    },
+                    options: {
+                        responsive: true,
+                        plugins: {
+                            legend: {
+                                display: true,
+                                position: "top"
+                            },
+                            tooltip: {
+                                callbacks: {
+                                    label: function (context) {
+                                        return `${context.dataset.label}: ${context.raw} cases`;
+                                    }
+                                }
+                            }
+                        },
+                        scales: {
+                            x: {
+                                title: {
+                                    display: true,
+                                    text: "Season"
+                                }
+                            },
+                            y: {
+                                beginAtZero: true,
+                                title: {
+                                    display: true,
+                                    text: "Number of Cases"
+                                }
+                            }
+                        }
+                    }
+                });
+            }
+
+            // Utility for random colors (=
+            function randomColor() {
+                const r = Math.floor(Math.random() * 255);
+                const g = Math.floor(Math.random() * 255);
+                const b = Math.floor(Math.random() * 255);
+                return `rgba(${r}, ${g}, ${b}, 0.6)`;
             }
 
             // Add Event Listener for Filter and Disease Selection
