@@ -1,4 +1,3 @@
-console.log("manage_diseases.js is executing.");
 const API_BASE_URL = "/supervisor/api/diseases/";
 
 document.addEventListener("DOMContentLoaded", () => {
@@ -7,7 +6,6 @@ document.addEventListener("DOMContentLoaded", () => {
         alert("Authorization token is missing. Please log in again.");
         return;
     }
-    console.log("DOM fully loaded and parsed.");
 
     fetchDiseases();
 });
