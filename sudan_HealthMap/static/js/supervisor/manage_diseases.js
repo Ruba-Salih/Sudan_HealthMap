@@ -10,7 +10,7 @@ document.addEventListener("DOMContentLoaded", () => {
     fetchDiseases();
 });
 
-// Helper function to get CSRF token
+
 function getCSRFToken() {
     let cookieValue = null;
     if (document.cookie && document.cookie !== "") {
@@ -181,7 +181,7 @@ function showUpdateForm(diseaseId, currentName, currentDescription) {
     };
 }
 
-// Reset the form and toggle buttons
+// Reset the form and buttons
 function resetForm() {
     document.getElementById("name").value = "";
     document.getElementById("description").value = "";

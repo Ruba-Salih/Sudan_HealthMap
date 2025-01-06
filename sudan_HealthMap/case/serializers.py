@@ -14,11 +14,8 @@ class CaseSerializer(serializers.ModelSerializer):
         extra_kwargs = {'hospital': {'read_only': True}}
 
     def create(self, validated_data):
-
         user = self.context['request'].user
-
         hospital = Hospital.objects.filter(email=user.email).first()
-        print(f"Associated Hospital in Serializer: {hospital}")
 
         if not hospital:
             raise serializers.ValidationError("No associated hospital from serializers")

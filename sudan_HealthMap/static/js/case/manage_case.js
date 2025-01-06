@@ -59,7 +59,7 @@ document.addEventListener("DOMContentLoaded", () => {
             const formData = new FormData(form);
             const data = Object.fromEntries(formData.entries());
             data.disease = parseInt(data.disease);
-            data.alive = document.getElementById("alive").checked;
+            
 
             const method = form.dataset.editing ? "PUT" : "POST";
             const endpoint =

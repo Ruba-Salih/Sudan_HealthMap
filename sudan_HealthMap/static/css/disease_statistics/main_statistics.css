@@ -5,10 +5,7 @@
     max-width: 1200px;
     padding: 20px;
     background-color: #ffffff;
-    border-radius: 8px;
-    /*box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);*/
-   
-    
+    border-radius: 8px;  
 }
 
 .statistics-section{
@@ -78,7 +75,7 @@ h2 {
 }
 
 
-/* Table and spacing */
+/* Table section */
 table {
     width: 80%;
     margin: 20px auto;
@@ -109,7 +106,7 @@ table tbody tr:hover {
     background-color: #f1f1f1;
 }
 
-/* Style for the scrollable table container */
+/* The scroll for the table container */
 .table-container {
     max-height: 500px;
     overflow-y: auto;
@@ -118,7 +115,7 @@ table tbody tr:hover {
     margin: 20px auto;
 }
 
-/* Table styles */
+/* Table section */
 thead {
     position: sticky;
     top: 0;

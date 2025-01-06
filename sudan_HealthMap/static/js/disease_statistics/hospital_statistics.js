@@ -12,9 +12,7 @@ document.addEventListener("DOMContentLoaded", async () => {
         }
 
         const data = await response.json();
-        console.log("Statistics data:", data);
 
-        // Populate your charts and tables using `data`
         populateChartsAndTables(data);
     } catch (error) {
         console.error("Error fetching hospital statistics:", error);
@@ -23,14 +21,13 @@ document.addEventListener("DOMContentLoaded", async () => {
 });
 
 function populateChartsAndTables(data) {
-    // Populate Common Diseases Table
     if (!data) {
         console.error("No data received.");
         return;
     }
 
     const commonTableBody = document.querySelector("#common-diseases-table tbody");
-    commonTableBody.innerHTML = ""; // Clear existing rows
+    commonTableBody.innerHTML = "";
     data.common_disease.forEach(disease => {
         const row = `<tr>
                         <td>${disease.disease__name}</td>
@@ -41,7 +38,7 @@ function populateChartsAndTables(data) {
 
     // Populate Recovered Diseases Table
     const recoveredTableBody = document.querySelector("#recovered-diseases-table tbody");
-    recoveredTableBody.innerHTML = ""; // Clear existing rows
+    recoveredTableBody.innerHTML = "";
     data.recovered_disease.forEach(disease => {
         const row = `<tr>
                         <td>${disease.disease__name}</td>
@@ -52,7 +49,7 @@ function populateChartsAndTables(data) {
 
     // Populate Deaths Diseases Table
     const deathTableBody = document.querySelector("#death-diseases-table tbody");
-    deathTableBody.innerHTML = ""; // Clear existing rows
+    deathTableBody.innerHTML = "";
     data.death_disease.forEach(disease => {
         const row = `<tr>
                         <td>${disease.disease__name}</td>
@@ -63,7 +60,7 @@ function populateChartsAndTables(data) {
 
     // Populate Rate of Disease Spread Table
     const dailyStatsTableBody = document.querySelector("#daily-stats-table tbody");
-    dailyStatsTableBody.innerHTML = ""; // Clear existing rows
+    dailyStatsTableBody.innerHTML = "";
     data.daily_stats.forEach(stat => {
         const row = `<tr>
                         <td>${stat.date_reported}</td>

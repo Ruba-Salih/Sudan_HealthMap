@@ -9,14 +9,14 @@ if (typeof API_TOKEN === 'undefined' || !API_TOKEN || API_TOKEN === "{{ token }}
 // Fetch and log diseases
 async function fetchDiseases() {
     try {
-        const response = await fetch("/supervisor/api/diseases/", { // Use correct URL
+        const response = await fetch("/supervisor/api/diseases/", {
             headers: {
                 Authorization: `Token ${API_TOKEN}`,
             },
         });
         if (response.ok) {
             const diseases = await response.json();
-            console.log("Diseases:", diseases); // Log diseases for testing
+            console.log("Diseases:", diseases);
         } else {
             console.error("Error fetching diseases:", response.statusText);
         }

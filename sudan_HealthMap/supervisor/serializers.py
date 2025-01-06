@@ -26,10 +26,9 @@ class HospitalSerializer(serializers.ModelSerializer):
 
         supervisor = request.user
         print(f"Supervisor assigned: {supervisor}")
-        # Assign the supervisor to the hospital
+
         validated_data['supervisor'] = supervisor
 
-        # Hash the password before saving
         password = validated_data.pop('password', None)
         hospital = Hospital(**validated_data)
         if password:

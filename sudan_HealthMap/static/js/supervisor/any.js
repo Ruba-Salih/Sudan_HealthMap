@@ -1,27 +1,22 @@
-console.log("manage_hospitals.js  executing.");
 const API_BASE_URL = "/supervisor/api/hospitals/";
 const STATES_API_URL = "/supervisor/api/states/";
 
 document.addEventListener("DOMContentLoaded", () => {
-    console.log("DOM fully loaded and parsed.");
 
-    // Check for API_TOKEN
     if (typeof API_TOKEN === "undefined" || !API_TOKEN) {
         console.error("Authorization token is not provided.");
         alert("Authorization token is missing. Please log in again.");
         return;
     }
 
-    // Attach functions to the global window object
     window.addHospital = addHospital;
     window.deleteHospital = deleteHospital;
     window.showUpdateForm = showUpdateForm;
 
-    fetchHospitals(); // Fetch all hospitals
-    fetchStates(); // Fetch states for dropdown
+    fetchHospitals();
+    fetchStates();
 });
 
-// Helper function to get the CSRF token from cookies
 function getCSRFToken() {
     let cookieValue = null;
     if (document.cookie && document.cookie !== "") {
@@ -37,7 +32,7 @@ function getCSRFToken() {
     return cookieValue;
 }
 
-// Add a new hospital
+// Add hospital
 async function addHospital(event) {
     event.preventDefault();
     console.log("addHospital function called.");
@@ -100,7 +95,7 @@ async function addHospital(event) {
         if (response.ok) {
             alert("Hospital added successfully!");
             document.getElementById("add-hospital-form").reset();
-            fetchHospitals(); // Refresh hospital list
+            fetchHospitals();
         } else {
             const errorData = await response.json();
             console.error("Error adding hospital:", errorData);
@@ -172,7 +167,7 @@ function displayHospitals(hospitals) {
         return;
     }
 
-    list.innerHTML = ""; // Clear the previous list
+    list.innerHTML = "";
 
     if (!hospitals || hospitals.length === 0) {
         list.innerHTML = "<li>No hospitals found.</li>";

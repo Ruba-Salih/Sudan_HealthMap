@@ -22,7 +22,6 @@ class HospitalToken(models.Model):
     def __str__(self):
         return self.key
 
-# Custom Authentication Class
 class HospitalTokenAuthentication(BaseAuthentication):
     def authenticate(self, request):
         auth_header = request.headers.get('Authorization')
