@@ -61,7 +61,9 @@
 
 ## Deployment
 
-1. **Install Docker Desktop If Not**:  [Download Here](https://www.docker.com/products/docker-desktop)
+1. **Install Docker Desktop **:
+Ensure Docker Desktop is installed on your system:
+[Download Here](https://www.docker.com/products/docker-desktop)
 
 2. **Clone the Repository**:
 
@@ -78,7 +80,7 @@ cd Sudan_HealthMap
     docker compose up --build
 ```
 
-- **migrate**:
+4. **Apply Database Migrations**:
 ```bash
     docker compose exec web python manage.py migrate
 ```
@@ -88,7 +90,7 @@ cd Sudan_HealthMap
     docker compose exec web python manage.py loaddata data.json
 ```
 
-4. **Access the Application**:
+5. **Access the Application**:
 - http://localhost:8000
 
 ### Authors
