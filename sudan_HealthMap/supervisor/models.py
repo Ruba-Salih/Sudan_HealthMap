@@ -54,5 +54,14 @@ class Supervisor(AbstractBaseUser, PermissionsMixin):
     USERNAME_FIELD = 'email'
     REQUIRED_FIELDS = ['name']
 
+    def get_full_name(self):
+        """
+        Return the name of the supervisor.
+        """
+        return self.name
+
     def __str__(self):
-        return f"{self.name} ({self.role})"
+        """
+        Return string of the supervisor details.
+        """
+        return f"{self.name}, {self.email}"

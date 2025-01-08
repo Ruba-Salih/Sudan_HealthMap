@@ -6,8 +6,6 @@ from rest_framework.response import Response
 from rest_framework.permissions import IsAuthenticated
 from .models import Case
 from .serializers import CaseSerializer
-from .models import Case
-from .serializers import CaseSerializer
 from disease.models import Disease
 from hospital.models import Hospital
 from hospital.hospital_tok import HospitalToken, HospitalTokenAuthentication

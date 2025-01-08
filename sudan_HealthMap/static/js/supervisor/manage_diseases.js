@@ -7,9 +7,8 @@ document.addEventListener("DOMContentLoaded", () => {
         return;
     }
 
-    fetchDiseases();
+    fetchAndDisplayDiseases();
 });
-
 
 function getCSRFToken() {
     let cookieValue = null;
@@ -26,46 +25,57 @@ function getCSRFToken() {
     return cookieValue;
 }
 
-// Fetch and display all diseases
-async function fetchDiseases() {
+// Fetch and display diseases
+async function fetchAndDisplayDiseases(query = "") {
     try {
         const response = await fetch(API_BASE_URL, {
             headers: {
                 Authorization: `Token ${API_TOKEN}`,
             },
         });
-        if (response.ok) {
-            const diseases = await response.json();
-            displayDiseases(diseases);
-        } else {
-            console.error("Failed to fetch diseases:", response.statusText);
+
+        if (!response.ok) {
+            throw new Error(`Failed to fetch diseases: ${response.statusText}`);
         }
+
+        const diseases = await response.json();
+        const filteredDiseases = diseases.filter(
+            (disease) =>
+                disease.name.toLowerCase().includes(query.toLowerCase()) ||
+                disease.description.toLowerCase().includes(query.toLowerCase())
+        );
+
+        const tableBody = document.getElementById("disease-table-body");
+        tableBody.innerHTML = "";
+
+        if (filteredDiseases.length === 0) {
+            tableBody.innerHTML = `<tr><td colspan="3">No diseases found.</td></tr>`;
+            return;
+        }
+
+        filteredDiseases.forEach((disease) => {
+            const row = `
+                <tr>
+                    <td>${disease.name || "N/A"}</td>
+                    <td>${disease.description || "N/A"}</td>
+                    <td>
+                        <button class='btn-secondary' onclick="showUpdateForm(${disease.id}, '${disease.name}', '${disease.description}')">Edit</button>
+                        <button class='btn-primary' onclick="deleteDisease(${disease.id})">Delete</button>
+                    </td>
+                </tr>
+            `;
+            tableBody.insertAdjacentHTML("beforeend", row);
+        });
     } catch (error) {
-        console.error("Unexpected error:", error);
+        console.error("Error fetching diseases:", error);
     }
 }
 
-// Display diseases in the disease list
-function displayDiseases(diseases) {
-    const list = document.getElementById("disease-list");
-    list.innerHTML = "";
-
-    if (!diseases || diseases.length === 0) {
-        list.innerHTML = "<li>No diseases found.</li>";
-        return;
-    }
-
-    diseases.forEach((disease) => {
-        const li = document.createElement("li");
-        li.innerHTML = `
-            <strong>Disease Name: ${disease.name}</strong> Description: ${disease.description}
-            <div class="actions">
-                <button onclick="deleteDisease(${disease.id})">Delete</button>
-                <button onclick="showUpdateForm(${disease.id}, '${disease.name}', '${disease.description}')">Edit</button>
-            </div>
-        `;
-        list.appendChild(li);
-    });
+// Search diseases
+function searchDiseases(event) {
+    event.preventDefault();
+    const query = document.getElementById("search-query").value.trim();
+    fetchAndDisplayDiseases(query);
 }
 
 // Add a new disease
@@ -95,7 +105,7 @@ async function addDisease(event) {
         if (response.ok) {
             alert("Disease added successfully!");
             document.getElementById("add-disease-form").reset();
-            fetchDiseases();
+            fetchAndDisplayDiseases();
         } else {
             const errorData = await response.json();
             console.error("Error adding disease:", errorData);
@@ -123,8 +133,7 @@ async function deleteDisease(id) {
 
         if (response.ok) {
             alert("Disease deleted successfully!");
-            resetForm()
-            fetchDiseases();
+            fetchAndDisplayDiseases();
         } else {
             console.error("Failed to delete disease:", response.statusText);
         }
@@ -168,7 +177,7 @@ function showUpdateForm(diseaseId, currentName, currentDescription) {
 
             if (response.ok) {
                 alert("Disease updated successfully!");
-                fetchDiseases();
+                fetchAndDisplayDiseases();
                 resetForm();
             } else {
                 const errorData = await response.json();

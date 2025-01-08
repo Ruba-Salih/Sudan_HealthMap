@@ -6,8 +6,7 @@
 
 {% block content %}
 {% include 'navbar.html' %}
-<h1>Welcome {{ hospital.name }}</h1>
-<p>State: {{ hospital.state }}</p>
+
 {% include 'disease_statistics/main_statistics.html' %}
 
 <script>const API_TOKEN = "{{ token }}"; 

@@ -2,6 +2,7 @@
 <link rel="stylesheet" href="{% static 'css/sidebar.css' %}">
 <div class="sidebar">
     <nav>
+        <h2 class="logo">Sudan <strontg style="color: #333;">HealthMap</strontg></h2>
         {% if user.is_authenticated %}
             {% if user.is_staff %}
                 <!-- Sidebar for Supervisor -->
@@ -10,6 +11,7 @@
                     <li><a href="/supervisor/manage-diseases/">Manage Diseases</a></li>
                     <li><a href="/supervisor/manage-hospitals/">Manage Hospitals</a></li>
                     <li><a href="/supervisor/manage-reports/">Manage Reports</a></li>
+                    <li><a href="/supervisor/change-password/">Change Password</a></li>
                     <li><a href="/supervisor/logout/">Logout</a></li>
                 </ul>
             {% else %}

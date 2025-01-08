@@ -2,7 +2,6 @@ const API_BASE_URL = "/supervisor/api/hospitals/";
 const STATES_API_URL = "/supervisor/api/states/";
 
 document.addEventListener("DOMContentLoaded", () => {
-
     if (typeof API_TOKEN === "undefined" || !API_TOKEN) {
         console.error("Authorization token is not provided.");
         alert("Authorization token is missing. Please log in again.");
@@ -12,11 +11,13 @@ document.addEventListener("DOMContentLoaded", () => {
     window.addHospital = addHospital;
     window.deleteHospital = deleteHospital;
     window.showUpdateForm = showUpdateForm;
+    window.searchHospitals = searchHospitals;
 
-    fetchHospitals();
+    fetchAndDisplayHospitals();
     fetchStates();
 });
 
+// Utility to get CSRF token
 function getCSRFToken() {
     let cookieValue = null;
     if (document.cookie && document.cookie !== "") {
@@ -32,42 +33,73 @@ function getCSRFToken() {
     return cookieValue;
 }
 
+// Fetch and display hospitals
+async function fetchAndDisplayHospitals(query = "") {
+    try {
+        const response = await fetch(API_BASE_URL, {
+            headers: {
+                Authorization: `Token ${API_TOKEN}`,
+            },
+        });
+
+        if (!response.ok) {
+            throw new Error(`Failed to fetch hospitals: ${response.statusText}`);
+        }
+
+        const hospitals = await response.json();
+        const filteredHospitals = hospitals.filter(
+            (hospital) =>
+                hospital.name.toLowerCase().includes(query.toLowerCase()) ||
+                hospital.state_name.toLowerCase().includes(query.toLowerCase())
+        );
+
+        const tableBody = document.getElementById("hospital-table-body");
+        if (!tableBody) {
+            console.error("Hospital table body element is missing.");
+            return;
+        }
+
+        tableBody.innerHTML = "";
+
+        if (filteredHospitals.length === 0) {
+            tableBody.innerHTML = `<tr><td colspan="4">No hospitals found.</td></tr>`;
+            return;
+        }
+
+        filteredHospitals.forEach((hospital) => {
+            const row = `
+                <tr>
+                    <td>${hospital.name || "N/A"}</td>
+                    <td>${hospital.state_name || "N/A"}</td>
+                    <td>${hospital.email || "N/A"}</td>
+                    <td>
+                        <button  class='btn-secondary' onclick="deleteHospital(${hospital.id})">Delete</button>
+                        <button class='btn-primary' onclick="showUpdateForm(${hospital.id}, '${hospital.name}', '${hospital.state}', '${hospital.email}')">Edit</button>
+                    </td>
+                </tr>
+            `;
+            tableBody.insertAdjacentHTML("beforeend", row);
+        });
+    } catch (error) {
+        console.error("Error fetching hospitals:", error);
+        alert("Error fetching hospitals. Please check your connection.");
+    }
+}
+
+// Search hospitals
+function searchHospitals(event) {
+    event.preventDefault();
+    const query = document.getElementById("search-query").value.trim();
+    fetchAndDisplayHospitals(query);
+}
 // Add hospital
 async function addHospital(event) {
     event.preventDefault();
-    console.log("addHospital function called.");
 
-    const nameField = document.getElementById("name");
-    const stateField = document.getElementById("state");
-    const emailField = document.getElementById("email");
-    const passwordField = document.getElementById("password");
-
-    // Debugging checks for fields
-    if (!nameField) {
-        console.error("Name input field is missing.");
-        alert("Name field is not found. Please check your HTML.");
-        return;
-    }
-    if (!stateField) {
-        console.error("State dropdown is missing.");
-        alert("State dropdown is not found. Please check your HTML.");
-        return;
-    }
-    if (!emailField) {
-        console.error("email input field is missing.");
-        alert("email field is not found. Please check your HTML.");
-        return;
-    }
-    if (!passwordField) {
-        console.error("Password input field is missing.");
-        alert("Password field is not found. Please check your HTML.");
-        return;
-    }
-
-    const name = nameField.value.trim();
-    const state = stateField.value;
-    const email = emailField.value.trim();
-    const password = passwordField.value.trim();
+    const name = document.getElementById("name").value.trim();
+    const state = document.getElementById("state").value;
+    const email = document.getElementById("email").value.trim();
+    const password = document.getElementById("password").value.trim();
 
     if (!name || !state || !email || !password) {
         alert("All fields are required!");
@@ -95,7 +127,7 @@ async function addHospital(event) {
         if (response.ok) {
             alert("Hospital added successfully!");
             document.getElementById("add-hospital-form").reset();
-            fetchHospitals();
+            fetchAndDisplayHospitals();
         } else {
             const errorData = await response.json();
             console.error("Error adding hospital:", errorData);
@@ -114,6 +146,7 @@ async function fetchStates() {
                 Authorization: `Token ${API_TOKEN}`,
             },
         });
+
         if (response.ok) {
             const states = await response.json();
             const stateDropdown = document.getElementById("state");
@@ -139,53 +172,6 @@ async function fetchStates() {
     }
 }
 
-// Fetch and display all hospitals
-async function fetchHospitals() {
-    try {
-        const response = await fetch(API_BASE_URL, {
-            headers: {
-                Authorization: `Token ${API_TOKEN}`,
-            },
-        });
-        if (response.ok) {
-            const hospitals = await response.json();
-            console.log("Fetched hospitals:", hospitals);
-            displayHospitals(hospitals);
-        } else {
-            console.error("Failed to fetch hospitals:", response.statusText);
-        }
-    } catch (error) {
-        console.error("Error fetching hospitals:", error);
-    }
-}
-
-// Display hospitals in the list
-function displayHospitals(hospitals) {
-    const list = document.getElementById("hospital-list");
-    if (!list) {
-        console.error("Hospital list element is missing.");
-        return;
-    }
-
-    list.innerHTML = "";
-
-    if (!hospitals || hospitals.length === 0) {
-        list.innerHTML = "<li>No hospitals found.</li>";
-        return;
-    }
-
-    hospitals.forEach((hospital) => {
-        const li = document.createElement("li");
-        li.innerHTML = `
-            <strong>Hospital Name: ${hospital.name}</strong>State: ${hospital.state_name || "N/A"}
-            <div class="actions">
-                <button onclick="deleteHospital(${hospital.id})">Delete</button>
-                <button onclick="showUpdateForm(${hospital.id}, '${hospital.name}', '${hospital.state}')">Edit</button>
-            </div>
-        `;
-        list.appendChild(li);
-    });
-}
 
 // Delete a hospital
 async function deleteHospital(hospitalId) {
@@ -205,7 +191,7 @@ async function deleteHospital(hospitalId) {
         if (response.ok) {
             alert("Hospital deleted successfully!");
             resetForm()
-            fetchHospitals();
+            fetchAndDisplayHospitals();
         } else {
             console.error("Failed to delete hospital:", response.statusText);
         }
@@ -260,7 +246,7 @@ function showUpdateForm(hospitalId, currentName, currentState) {
 
             if (response.ok) {
                 alert("Hospital updated successfully!");
-                fetchHospitals();
+                fetchAndDisplayHospitals();
                 resetForm();
             } else {
                 const errorData = await response.json();
@@ -275,11 +261,8 @@ function showUpdateForm(hospitalId, currentName, currentState) {
 
 // Reset the form and toggle buttons
 function resetForm() {
-    const nameField = document.getElementById("name").value = "";
-    const stateField = document.getElementById("state").value = "";
-
-    if (nameField) nameField.value = "";
-    if (stateField) stateField.value = "";
+    document.getElementById("name").value = "";
+    document.getElementById("state").value = "";
 
     document.getElementById("add-hospital-btn").style.display = "block";
     document.getElementById("update-hospital-btn").style.display = "none";

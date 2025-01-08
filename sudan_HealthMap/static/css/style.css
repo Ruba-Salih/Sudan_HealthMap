@@ -1,7 +1,7 @@
 /* Global button styles */
 :root {
-    --button-color: #007bff; /* Default blue */
-    --button-hover-color: #0056b3; /* Hover effect */
+    --button-color: #609f9f; /* Default blue */
+    --button-hover-color: #4d8080; /* Hover effect */
     --button-text-color: white; /* Text color */
     --button-disabled-color: #cccccc; /* Disabled button */
 }
@@ -28,19 +28,29 @@ button:disabled {
 
 /* Optional: Additional styles for specific types of buttons */
 .btn-primary {
-    background-color: #007bff;
+    background-color: #e35b35;
     color: white;
 }
 
 .btn-primary:hover {
-    background-color: #0056b3;
+    background-color: #d4461d;
 }
 
 .btn-secondary {
-    background-color: #6c757d;
+    background-color: #2a8aa2;
     color: white;
 }
 
 .btn-secondary:hover {
-    background-color: #5a6268;
+    background-color: #1f687a;
+}
+
+
+.btn-download {
+    background-color: #99a5b2;
+    color: white;
+}
+
+.btn-download:hover {
+    background-color: #7c8b9c;
 }

@@ -65,6 +65,7 @@ document.addEventListener("DOMContentLoaded", async () => {
                     <td>${caseItem.patient_status}</td>
                     <td>${caseItem.main_symptom_causing_death || "-"}</td>
                     <td>${caseItem.season}</td>
+                    <td>${caseItem.date_reported}</td>
                 </tr>
             `;
             reportTableBody.insertAdjacentHTML("beforeend", row);
@@ -93,7 +94,6 @@ document.addEventListener("DOMContentLoaded", async () => {
         a.click();
     });
 
-    // Handle disease change
     diseaseSelect.addEventListener("change", (event) => {
         const diseaseId = event.target.value;
         if (diseaseId) fetchReports(diseaseId);

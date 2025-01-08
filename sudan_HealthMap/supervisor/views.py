@@ -1,45 +1,23 @@
 from django.shortcuts import render, redirect
-from django.contrib import messages
-from django.contrib.auth import authenticate, login, logout
+from django.contrib.auth import  logout
 from django.contrib.auth.decorators import login_required
 from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework.authtoken.models import Token
 from rest_framework import status
 from rest_framework.permissions import IsAuthenticated
+from rest_framework.authentication import SessionAuthentication, TokenAuthentication
 from django.shortcuts import get_object_or_404
-from .serializers import HospitalSerializer, DiseaseSerializer
-from state.serializers import StateSerializer
 from hospital.models import Hospital
+from hospital.serializers import HospitalSerializer
+from disease.serializers import DiseaseSerializer
 from disease.models import Disease
 from state.models import State
+from state.serializers import StateSerializer
 from .utility import generate_report, generate_state_report
 
 
-
-def supervisor_login(request):
-    """
-    Handle the login process for a supervisor.
-    """
-    if request.method == 'POST':
-        email = request.POST.get('email')
-        password = request.POST.get('password')
-
-        user = authenticate(request, username=email, password=password)
-        if user is not None:
-            login(request, user)
-
-            token, _ = Token.objects.get_or_create(user=user)
-            request.session['api_token'] = token.key
-
-            return redirect('supervisor_dashboard')
-        else:
-            return render(request, 'login.html', {'error': 'Invalid credentials'})
-
-    return render(request, 'login.html')
-
-
-def logout_view(request):
+def supervisor_logout(request):
     """
     Log out the supervisor and clear the token.
     """
@@ -64,7 +42,7 @@ def supervisor_dashboard(request):
     """
     token = request.session.get('api_token')
     if not token:
-        return redirect('supervisor_login')
+        return redirect('login_view')
 
     return render(request,'supervisor/dashboard.html', {'token': token})
 
@@ -81,7 +59,7 @@ def manage_hospitals(request):
     """
     token = request.session.get('api_token')
     if not token:
-        return redirect('supervisor_login')
+        return redirect('login_view')
 
     return render(request, 'supervisor/manage_hospitals.html', {'token': token})
 
@@ -92,7 +70,7 @@ def manage_reports(request):
     """
     token = request.session.get('api_token')
     if not token:
-        return redirect('supervisor_login')
+        return redirect('login_view')
 
     return render(request, "supervisor/manage_reports.html")
 
@@ -103,7 +81,7 @@ def hospital_reports(request):
     """
     token = request.session.get('api_token')
     if not token:
-        return redirect('supervisor_login')
+        return redirect('login_view')
 
     return render(request, "supervisor/hospital_reports.html", {'token': token})
 
@@ -114,7 +92,8 @@ def simple_hospital_report(request, hospital_id):
     """
     token = request.session.get('api_token')
     if not token:
-        return redirect('supervisor_login')
+        return redirect('login_view')
+
     return generate_report(hospital_id, "simple", "json")
 
 @login_required
@@ -124,7 +103,8 @@ def download_simple_report(request, hospital_id):
     """
     token = request.session.get('api_token')
     if not token:
-        return redirect('supervisor_login')
+        return redirect('login_view')
+
     return generate_report(hospital_id, "simple", "csv")
 
 @login_required
@@ -134,7 +114,8 @@ def detailed_hospital_report(request, hospital_id):
     """
     token = request.session.get('api_token')
     if not token:
-        return redirect('supervisor_login')
+        return redirect('login_view')
+
     return generate_report(hospital_id, "detailed", "json")
 
 @login_required
@@ -144,7 +125,8 @@ def download_detailed_report(request, hospital_id):
     """
     token = request.session.get('api_token')
     if not token:
-        return redirect('supervisor_login')
+        return redirect('login_view')
+
     return generate_report(hospital_id, "detailed", "csv")
 
 @login_required
@@ -154,7 +136,7 @@ def state_reports(request):
     """
     token = request.session.get('api_token')
     if not token:
-        return redirect('supervisor_login')
+        return redirect('login_view')
 
     return render(request, "supervisor/state_reports.html", {'token': token})
 
@@ -165,7 +147,7 @@ def state_report(request, state_id):
     """
     token = request.session.get('api_token')
     if not token:
-        return redirect('supervisor_login')
+        return redirect('login_view')
 
     return generate_state_report(state_id, response_format="json")
 
@@ -176,7 +158,7 @@ def download_state_report(request, state_id):
     """
     token = request.session.get('api_token')
     if not token:
-        return redirect('supervisor_login')
+        return redirect('login_view')
     return generate_state_report(state_id, response_format="csv")
 
 
@@ -187,10 +169,7 @@ class HospitalListCreateAPIView(APIView):
     permission_classes = [IsAuthenticated]
 
     def get(self, request):
-        print(f"Supervisorc: {request.user}")
         hospitals = request.user.supervised_hospitals.all()
-        print(f"Queryset: {hospitals.query}")
-        print(f"Retrieved Hospitals: {hospitals}")
         serializer = HospitalSerializer(hospitals, many=True)
         return Response(serializer.data)
 
@@ -249,7 +228,7 @@ class HospitalRetrieveUpdateDeleteAPIView(APIView):
 def manage_diseases(request):
     token = request.session.get('api_token')
     if not token:
-        return redirect('supervisor_login')
+        return redirect('login_view')
 
     return render(request, "supervisor/manage_diseases.html", {"token": token})
 
@@ -329,3 +308,37 @@ class StateListAPIView(APIView):
         states = State.objects.all()
         serializer = StateSerializer(states, many=True)
         return Response(serializer.data)
+
+def supervisor_change_password(request):
+    """
+    View for supervisor user to change password
+    """
+    token = request.session.get('api_token')
+    print(f"Token retrieved from session: {token}")
+    if not token:
+        return redirect('login_view')
+    
+    return render(request,'change_password.html', {"api_token": token, "user_type": "supervisor"})
+
+class ChangePasswordAPIView(APIView):
+    """
+    API endpoint for changing the password of a supervisor.
+    """
+    permission_classes = [IsAuthenticated]
+    authentication_classes = [TokenAuthentication, SessionAuthentication]
+
+    def post(self, request, *args, **kwargs):
+        supervisor = request.user
+        old_password = request.data.get("old_password")
+        new_password = request.data.get("new_password")
+
+        if not old_password or not new_password:
+            return Response({"error": "Both old and new passwords are required."}, status=status.HTTP_400_BAD_REQUEST)
+
+        if not supervisor.check_password(old_password):
+            return Response({"error": "Old password is incorrect."}, status=status.HTTP_400_BAD_REQUEST)
+
+        supervisor.set_password(new_password)
+        supervisor.save()
+
+        return Response({"message": "Password changed successfully."}, status=status.HTTP_200_OK)
