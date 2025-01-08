@@ -8,3 +8,4 @@ function changeButtonColor(color, hoverColor, textColor) {
 // Example: Change buttons to green
 // Call this function dynamically as needed
 // changeButtonColor('#28a745', '#218838', 'white');
+// e57373

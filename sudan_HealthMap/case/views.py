@@ -3,12 +3,7 @@ from django.contrib.auth.decorators import login_required
 from django.contrib import messages
 from rest_framework.views import APIView
 from rest_framework.response import Response
-from rest_framework.authtoken.models import Token
-from rest_framework import status
 from rest_framework.permissions import IsAuthenticated
-from rest_framework.authentication import TokenAuthentication
-from .models import Case
-from .serializers import CaseSerializer
 from .models import Case
 from .serializers import CaseSerializer
 from disease.models import Disease
@@ -21,26 +16,23 @@ def manage_case(request):
 
     try:
         hospital = Hospital.objects.get(email=request.user.email)
-        print(f"Associated Hospital: {hospital.name}")
     except Hospital.DoesNotExist:
         return render(request, 'error.html', {'message': 'No hospital found for the logged-in user.'})
 
-    # Generate or retrieve the token for the authenticated user
     token, _ = HospitalToken.objects.get_or_create(hospital=request.user)
 
     diseases = Disease.objects.all()
 
     context = {
         'diseases': diseases,
-        'token': token.key,  # Pass token to the template
-        'hospital': hospital,  # Add hospital object to context
+        'token': token.key,
+        'hospital': hospital,
     }
 
 
     if request.method == 'POST':
-        # Prepare case data
         data = request.POST.copy()
-        data['hospital'] = hospital.id  # Assign the hospital ID to the case
+        data['hospital'] = hospital.id
         serializer = CaseSerializer(data=data, context={'request': request})
         
         if serializer.is_valid():
@@ -48,7 +40,7 @@ def manage_case(request):
             messages.success(request, "New case added successfully!")
             return redirect('hospital:hospital_dashboard')
         else:
-            context['errors'] = serializer.errors  # Include errors in context
+            context['errors'] = serializer.errors
             return render(request, 'case/manage_case.html', context)
     else:
         return render(request, 'case/manage_case.html', context)
@@ -67,10 +59,6 @@ class CaseAPIView(APIView):
         if not hospital:
             return Response({"error": "No hospital found for the logged-in user."}, status=403)
 
-        # Debugging: Print the hospital associated
-        print(f"Hospital for GET: {hospital.name}")
-
-        # If `pk` is provided, retrieve the specific case
         if pk:
             case = Case.objects.filter(pk=pk, hospital=hospital).first()
             if not case:
@@ -78,13 +66,8 @@ class CaseAPIView(APIView):
             serializer = CaseSerializer(case)
             return Response(serializer.data, status=200)
 
-        # Otherwise, retrieve all cases for the hospital
         cases = Case.objects.filter(hospital=hospital)
         serializer = CaseSerializer(cases, many=True)
-
-        # Debugging: Print the diseases in the cases
-        for case in cases:
-            print(f"Disease in Case: {case.disease}")
 
         return Response(serializer.data, status=200)
 
@@ -92,7 +75,6 @@ class CaseAPIView(APIView):
         """
         Helper method to retrieve the associated hospital for the logged-in user.
         """
-
         try:
             return Hospital.objects.get(email=user.email)
         except Hospital.DoesNotExist:
@@ -113,13 +95,11 @@ class CaseAPIView(APIView):
             return Response({"error": "The disease field is required."}, status=400)
 
         data['hospital'] = hospital.id
-        print(f"POST Data with Hospital: {data}")
-
         serializer = CaseSerializer(data=data, context={'request': request})
         if serializer.is_valid():
             serializer.save()
             return Response(serializer.data, status=201)
-        print(f"Serializer Errors: {serializer.errors}")
+
         return Response(serializer.errors, status=400)
     
     def put(self, request, pk):
@@ -140,7 +120,6 @@ class CaseAPIView(APIView):
             serializer.save()
             return Response(serializer.data, status=200)
 
-        print(f"Serializer Errors: {serializer.errors}")
         return Response(serializer.errors, status=400)
 
     def delete(self, request, pk):
@@ -157,6 +136,3 @@ class CaseAPIView(APIView):
             return Response({"message": "Case deleted successfully."}, status=204)
         except Case.DoesNotExist:
             return Response({"error": "Case not found."}, status=404)
-        except Exception as e:
-            print(f"Error in DELETE: {e}")
-            return Response({"error": str(e)}, status=500)

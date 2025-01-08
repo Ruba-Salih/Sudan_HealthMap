@@ -33,7 +33,7 @@ class Case(models.Model):
 
     class Meta:
         """
-        To ensures the combination of hospital and patient_number is unique.
+        To make the combination of hospital and patient_number is unique.
         """
         constraints = [
             models.UniqueConstraint(fields=['hospital', 'patient_number'], name='unique_patient_number_per_hospital')

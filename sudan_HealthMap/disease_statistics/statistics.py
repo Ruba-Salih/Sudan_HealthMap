@@ -1,28 +1,26 @@
 from django.db.models import Count, Q
 import pandas as pd
 from case.models import Case
-from supervisor.serializers import StateSerializer
+from state.serializers import StateSerializer
 from state.models import State
 
 
 def calculate_disease_statistics():
     queryset = (
         Case.objects.select_related('disease', 'hospital')
-        .values('disease__name', 'hospital__state__name', 'hospital__name', 'season')  # Include season
+        .values('disease__name', 'hospital__state__name', 'hospital__name', 'season')
         .annotate(
-            total_cases=Count('id'),  # Total number of cases for this disease
-            total_deaths=Count('id', filter=Q(patient_status='deceased'))  # Total deaths for this disease
+            total_cases=Count('id'),
+            total_deaths=Count('id', filter=Q(patient_status='deceased'))
         )
     )
 
-    # Convert queryset to Pandas DataFrame for processing
     df = pd.DataFrame(list(queryset))
 
     if df.empty:
         return None, None, None, None
 
-    # Aggregating statistics
-    # 1. Most common diseases
+    ''' Most common diseases'''
     common_diseases = (
         df.groupby('disease__name')['total_cases']
         .sum()
@@ -30,7 +28,7 @@ def calculate_disease_statistics():
         .sort_values(by='total_cases', ascending=False)
     )
 
-    # 2. State-level disease prevalence
+    ''' State-level disease prevalence '''
     state_disease_stats = (
         df.groupby(['hospital__state__name', 'disease__name'])
         .agg(
@@ -40,7 +38,7 @@ def calculate_disease_statistics():
         .reset_index()
     )
 
-    # 3. Seasonal disease distribution
+    ''' Seasonal disease distribution '''
     seasonal_disease_stats = (
         df.groupby(['season', 'disease__name'])
         .agg(
@@ -50,10 +48,9 @@ def calculate_disease_statistics():
         .sort_values(by=['season', 'total_cases'], ascending=[True, False])
     )
 
-    # Fetch unique states using the StateSerializer
     states = State.objects.all()
     serializer = StateSerializer(states, many=True)
-    unique_states = serializer.data  # Serialized state data
+    unique_states = serializer.data
 
     return common_diseases, state_disease_stats, unique_states, seasonal_disease_stats
 
@@ -65,68 +62,59 @@ def calculate_hospital_statistics(hospital):
     - Disease with the most deaths.
     - Rate of increase or decrease in cases over days.
     """
-    # Filter cases for the given hospital
     queryset = (
         Case.objects.filter(hospital=hospital)
         .select_related('disease')
         .values('disease__name')
         .annotate(
-            total_cases=Count('id'),  # Total number of cases for the disease
-            total_recovered=Count('id', filter=Q(patient_status='recovered')),  # Recoveries for the disease
-            total_deaths=Count('id', filter=Q(patient_status='deceased'))  # Deaths for the disease
+            total_cases=Count('id'),
+            total_recovered=Count('id', filter=Q(patient_status='recovered')),
+            total_deaths=Count('id', filter=Q(patient_status='deceased'))
         )
     )
 
-    # Convert queryset to Pandas DataFrame for processing
     df = pd.DataFrame(list(queryset))
 
     if df.empty:
         return None, None, None, None
 
-    # 1. Most common disease
+    ''' Most common disease '''
     most_common_disease = df.sort_values(by='total_cases', ascending=False)
 
-    # 2. Disease with the most recoveries
+    ''' Disease with the most recoveries '''
     most_recovered_disease = df.sort_values(by='total_recovered', ascending=False)
 
-    # 3. Disease with the most deaths
+    ''' Disease with the most deaths '''
     most_death_disease = df.sort_values(by='total_deaths', ascending=False)
 
-    # 4. Rate of increase or decrease in cases over days
+    ''' Rate of increase or decrease in cases in days '''
     daily_cases = (
         Case.objects.filter(hospital=hospital)
-        .values('disease__name', 'date_reported')  # Use the correct field name
-        .annotate(daily_total=Count('id'))
+        .values('disease__name', 'date_reported')
+        .annotate(total_cases=Count('id'))
     )
 
-    # Convert daily data to Pandas DataFrame
     daily_df = pd.DataFrame(list(daily_cases))
 
     if not daily_df.empty:
-        daily_df['date_reported'] = pd.to_datetime(daily_df['date_reported'])
+        # Format date and sort
+        daily_df['date_reported'] = pd.to_datetime(daily_df['date_reported']).dt.strftime('%Y-%m-%d')
         daily_df = daily_df.sort_values(by=['disease__name', 'date_reported'])
 
-        daily_df['daily_change'] = (
-            daily_df.groupby('disease__name')['daily_total'].diff()
-        )
-    
-        daily_df['rate_of_change'] = (
-            daily_df.groupby('disease__name')['daily_change'].transform(lambda x: x.diff() / x.shift(1) * 100)
-        )
-    else:
-        daily_df = None
+        # Fill missing dates for consistency in the frontend
+        all_dates = pd.date_range(start=daily_df['date_reported'].min(), end=daily_df['date_reported'].max())
+        disease_groups = daily_df.groupby('disease__name')
 
-    most_common_disease = clean_dataframe(most_common_disease)
-    most_recovered_disease = clean_dataframe(most_recovered_disease)
-    most_death_disease = clean_dataframe(most_death_disease)
-    daily_df = clean_dataframe(daily_df)
+        filled_dfs = []
+        for disease, group in disease_groups:
+            group = group.set_index('date_reported')
+            group = group.reindex(all_dates.strftime('%Y-%m-%d'), fill_value=0)
+            group['disease__name'] = disease
+            filled_dfs.append(group.reset_index().rename(columns={'index': 'date_reported'}))
+
+        daily_df = pd.concat(filled_dfs, ignore_index=True)
+
+    else:
+        daily_df = pd.DataFrame(columns=['disease__name', 'date_reported', 'total_cases'])
 
     return most_common_disease, most_recovered_disease, most_death_disease, daily_df
-
-def clean_dataframe(df):
-    if df is not None:
-        df = df.fillna(0)  # Replace NaN with 0
-        df = df.replace([float('inf'), float('-inf')], 0)  # Replace Infinity with 0
-        if 'date_reported' in df.columns:
-            df['date_reported'] = df['date_reported'].astype(str)  # Convert Timestamps to strings
-    return df

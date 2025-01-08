@@ -18,16 +18,15 @@ document.addEventListener("DOMContentLoaded", async () => {
             if (!response.ok) throw new Error("Failed to fetch diseases.");
 
             const diseases = await response.json();
-            diseaseSelect.innerHTML = ""; // Clear existing options
+            diseaseSelect.innerHTML = "";
             diseases.forEach((disease, index) => {
                 const option = document.createElement("option");
                 option.value = disease.id;
                 option.textContent = disease.name;
-                if (index === 0) option.selected = true; // Default to the first disease
+                if (index === 0) option.selected = true; 
                 diseaseSelect.appendChild(option);
             });
 
-            // Fetch reports for the default disease
             if (diseases.length > 0) {
                 fetchReports(diseases[0].id);
             }
@@ -54,9 +53,8 @@ document.addEventListener("DOMContentLoaded", async () => {
         }
     }
 
-    // Display cases in the table
     function displayReports(cases) {
-        reportTableBody.innerHTML = ""; // Clear previous data
+        reportTableBody.innerHTML = "";
         cases.forEach((caseItem) => {
             const row = `
                 <tr>
@@ -67,12 +65,12 @@ document.addEventListener("DOMContentLoaded", async () => {
                     <td>${caseItem.patient_status}</td>
                     <td>${caseItem.main_symptom_causing_death || "-"}</td>
                     <td>${caseItem.season}</td>
+                    <td>${caseItem.date_reported}</td>
                 </tr>
             `;
             reportTableBody.insertAdjacentHTML("beforeend", row);
         });
 
-        // Show the download button if cases exist
         downloadButton.style.display = cases.length > 0 ? "block" : "none";
     }
 
@@ -96,12 +94,10 @@ document.addEventListener("DOMContentLoaded", async () => {
         a.click();
     });
 
-    // Handle disease change
     diseaseSelect.addEventListener("change", (event) => {
         const diseaseId = event.target.value;
         if (diseaseId) fetchReports(diseaseId);
     });
 
-    // Initial fetch of diseases
     await fetchDiseases();
 });

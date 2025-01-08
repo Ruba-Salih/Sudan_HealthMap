@@ -12,9 +12,7 @@ document.addEventListener("DOMContentLoaded", async () => {
         }
 
         const data = await response.json();
-        console.log("Statistics data:", data);
 
-        // Populate your charts and tables using `data`
         populateChartsAndTables(data);
     } catch (error) {
         console.error("Error fetching hospital statistics:", error);
@@ -23,14 +21,13 @@ document.addEventListener("DOMContentLoaded", async () => {
 });
 
 function populateChartsAndTables(data) {
-    // Populate Common Diseases Table
     if (!data) {
         console.error("No data received.");
         return;
     }
 
     const commonTableBody = document.querySelector("#common-diseases-table tbody");
-    commonTableBody.innerHTML = ""; // Clear existing rows
+    commonTableBody.innerHTML = "";
     data.common_disease.forEach(disease => {
         const row = `<tr>
                         <td>${disease.disease__name}</td>
@@ -39,9 +36,8 @@ function populateChartsAndTables(data) {
         commonTableBody.insertAdjacentHTML("beforeend", row);
     });
 
-    // Populate Recovered Diseases Table
     const recoveredTableBody = document.querySelector("#recovered-diseases-table tbody");
-    recoveredTableBody.innerHTML = ""; // Clear existing rows
+    recoveredTableBody.innerHTML = "";
     data.recovered_disease.forEach(disease => {
         const row = `<tr>
                         <td>${disease.disease__name}</td>
@@ -50,9 +46,8 @@ function populateChartsAndTables(data) {
         recoveredTableBody.insertAdjacentHTML("beforeend", row);
     });
 
-    // Populate Deaths Diseases Table
     const deathTableBody = document.querySelector("#death-diseases-table tbody");
-    deathTableBody.innerHTML = ""; // Clear existing rows
+    deathTableBody.innerHTML = "";
     data.death_disease.forEach(disease => {
         const row = `<tr>
                         <td>${disease.disease__name}</td>
@@ -61,25 +56,10 @@ function populateChartsAndTables(data) {
         deathTableBody.insertAdjacentHTML("beforeend", row);
     });
 
-    // Populate Rate of Disease Spread Table
-    const dailyStatsTableBody = document.querySelector("#daily-stats-table tbody");
-    dailyStatsTableBody.innerHTML = ""; // Clear existing rows
-    data.daily_stats.forEach(stat => {
-        const row = `<tr>
-                        <td>${stat.date_reported}</td>
-                        <td>${stat.disease__name}</td>
-                        <td>${stat.daily_change * -1|| "-"}</td>
-                        <td>${stat.rate_of_change ? stat.rate_of_change.toFixed(2) : "-"}</td>
-                    </tr>`;
-        dailyStatsTableBody.insertAdjacentHTML("beforeend", row);
-    });
-
-    // Update Charts (if applicable)
     updateCharts(data);
 }
 
 function updateCharts(data) {
-    // Recovery Donut Chart
     const recoveryCtx = document.getElementById("recovery-donut-chart").getContext("2d");
     new Chart(recoveryCtx, {
         type: "doughnut",
@@ -101,7 +81,6 @@ function updateCharts(data) {
         },
     });
 
-    // Death Donut Chart
     const deathCtx = document.getElementById("death-donut-chart").getContext("2d");
     new Chart(deathCtx, {
         type: "doughnut",
@@ -109,7 +88,7 @@ function updateCharts(data) {
             labels: data.death_disease.map(d => d.disease__name),
             datasets: [{
                 data: data.death_disease.map(d => d.total_deaths),
-                backgroundColor: [ "#988067", "#e1866b", "#41beb4", "#e7b04b", "#d3d5c3"],
+                backgroundColor: ["#988067", "#e1866b", "#41beb4", "#e7b04b", "#d3d5c3"],
             }],
         },
         options: {
@@ -123,18 +102,27 @@ function updateCharts(data) {
         },
     });
 
-    // Rate of Disease Spread Line Chart
-    const rateCtx = document.getElementById("rate-line-chart").getContext("2d");
-    new Chart(rateCtx, {
+    const lineCtx = document.getElementById("rate-line-chart").getContext("2d");
+
+    const diseases = Array.from(new Set(data.daily_stats.map(stat => stat.disease__name)));
+    const allDates = getAllDates(data.daily_stats.map(stat => stat.date_reported));
+
+    const datasets = diseases.map(disease => {
+        const diseaseData = fillMissingData(data.daily_stats, disease, allDates);
+        return {
+            label: disease,
+            data: diseaseData.map(stat => stat.total_cases || 0),
+            borderColor: randomColor(),
+            tension: 0.3,
+            fill: false,
+        };
+    });
+
+    new Chart(lineCtx, {
         type: "line",
         data: {
-            labels: data.daily_stats.map(stat => stat.date_reported),
-            datasets: [{
-                label: "New Cases",
-                data: data.daily_stats.map(stat => stat.daily_change),
-                borderColor: "#42a5f5",
-                fill: true,
-            }],
+            labels: allDates,
+            datasets: datasets,
         },
         options: {
             responsive: true,
@@ -154,10 +142,45 @@ function updateCharts(data) {
                 y: {
                     title: {
                         display: true,
-                        text: "New Cases",
+                        text: "Total Cases",
                     },
                 },
             },
         },
     });
+}
+
+// Utility function to get all dates in the data range
+function getAllDates(dates) {
+    const uniqueDates = Array.from(new Set(dates)).map(date => new Date(date));
+    uniqueDates.sort((a, b) => a - b);
+
+    const allDates = [];
+    let currentDate = uniqueDates[0];
+    const endDate = uniqueDates[uniqueDates.length - 1];
+
+    while (currentDate <= endDate) {
+        allDates.push(currentDate.toISOString().split("T")[0]);
+        currentDate.setDate(currentDate.getDate() + 1);
+    }
+
+    return allDates;
+}
+
+// Utility function to fill missing data for a disease
+function fillMissingData(dailyStats, disease, allDates) {
+    const diseaseData = dailyStats.filter(stat => stat.disease__name === disease);
+    const filledData = allDates.map(date => {
+        const existingStat = diseaseData.find(stat => stat.date_reported === date);
+        return existingStat || { date_reported: date, total_cases: 0 };
+    });
+    return filledData;
+}
+
+// Utility function for random colors
+function randomColor() {
+    const r = Math.floor(Math.random() * 255);
+    const g = Math.floor(Math.random() * 255);
+    const b = Math.floor(Math.random() * 255);
+    return `rgba(${r}, ${g}, ${b}, 1)`;
 }

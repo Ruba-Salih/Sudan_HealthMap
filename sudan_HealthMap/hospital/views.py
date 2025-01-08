@@ -8,42 +8,8 @@ from rest_framework.response import Response
 from rest_framework.renderers import JSONRenderer
 from rest_framework import status
 from case.models import Case
-from .models import Hospital
-from .hospital_tok import HospitalToken, HospitalTokenAuthentication
+from .hospital_tok import HospitalTokenAuthentication
 
-
-def hospital_login(request):
-    """
-    View for Hospital Login
-    """
-    if request.method == 'POST':
-        email = request.POST.get('email')
-        password = request.POST.get('password')
-
-        print(f"Attempting login with email: {email}")
-
-
-        try:
-             hospital = Hospital.objects.get(email=email)
-             print(f"Hospital found: {hospital.name}")
-             if check_password(password, hospital.password):
-                print("Password is valid")
-                login(request, hospital, backend='hospital.auth_backend.HospitalBackend')
-
-                token, _ = HospitalToken.objects.get_or_create(hospital=hospital)
-                request.session['api_token'] = token.key
-
-                print('ok')
-                return redirect('hospital:hospital_dashboard')
-             else:
-                return render(request, 'login.html', {'error': 'Invalid credentials'})
-        except Hospital.DoesNotExist:
-            render(request, 'error.html', {'message': 'No hospital found for the logged-in user.'})
-        except Exception as e:
-            print(f"Unexpected error: {e}")
-            return render(request, 'login.html', {'error': 'An unexpected error occurred. Please try again.'})
-            
-    return render(request, 'login.html')
 
 @login_required
 def hospital_logout(request):
@@ -71,7 +37,7 @@ def hospital_dashboard(request):
     print('ok2')
     token = request.session.get('api_token')
     if not token:
-        return redirect('hospital_login')
+        return redirect('login_view')
     
     return render(request,'hospital/dashboard.html', {'token': token})
 
@@ -82,7 +48,7 @@ def hospital_report(request):
     token = request.session.get('api_token')
     print(f"Token retrieved from session: {token}")
     if not token:
-        return redirect('hospital_login')
+        return redirect('login_view')
     
     return render(request,'hospital/manage_reports.html', {'api_token': token})
 
@@ -112,6 +78,7 @@ class HospitalReportAPIView(APIView):
             "patient_status",
             "main_symptom_causing_death",
             "season",
+            "date_reported",
         )
 
         return Response(list(cases), status=200)
@@ -124,7 +91,7 @@ def hospital_change_password(request):
     token = request.session.get('api_token')
     print(f"Token retrieved from session: {token}")
     if not token:
-        return redirect('hospital_login')
+        return redirect('login_view')
     
     return render(request,'change_password.html', {"api_token": token, "user_type": "hospital"})
 

@@ -1,3 +1,4 @@
+/* General container styling */
 .statistics-container {
     max-width: 1000px;
     margin: 20px auto;
@@ -29,7 +30,7 @@
 }
 
 .statistics-section p {
-    font-size: 16px;
+    font-size: 20px;
     font-style: italic;
     margin-bottom: 20px;
     text-align: center;

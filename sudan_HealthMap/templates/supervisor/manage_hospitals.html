@@ -38,10 +38,23 @@
     <div class="list-container">
         <h2>Hospital List</h2>
         <form id="search-form" onsubmit="searchHospitals(event)">
-            <input type="text" id="search-query" placeholder="Search hospitals...">
+            <input type="text" id="search-query" placeholder="Search hospitals by name or state">
             <button type="submit">Search</button>
         </form>
-        <ul id="hospital-list"></ul>
+        <table>
+            <thead>
+                <tr>
+                    <th>Hospital Name</th>
+                    <th>State</th>
+                    <th>Email</th>
+                    <th>Actions</th>
+                </tr>
+            </thead>
+            <tbody id="hospital-table-body">
+                <!-- Rows will be dynamically inserted here -->
+            </tbody>
+        </table>
+        
     </div>
 </div>
 {% endblock %}

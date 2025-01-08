@@ -33,11 +33,19 @@
     <div class="list-container">
         <h2>Disease List</h2>
         <form id="search-form" onsubmit="searchDiseases(event)">
-            <label for="search-query">Search Diseases:</label>
-            <input type="text" id="search-query" placeholder="Enter name or description">
+            <input type="text" id="search-query" placeholder="Search disease name or description">
             <button type="submit">Search</button>
         </form>
-        <ul id="disease-list"></ul>
+        <table>
+            <thead>
+                <tr>
+                    <th>Disease Name</th>
+                    <th>Description</th>
+                    <th>Actions</th>
+                </tr>
+            </thead>
+            <tbody id="disease-table-body"></tbody>
+        </table>
     </div>
 </div>
 {% endblock %}

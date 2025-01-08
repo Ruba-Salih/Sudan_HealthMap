@@ -1,4 +1,3 @@
-console.log("API Token successfully loaded.");
 document.addEventListener("DOMContentLoaded", () => {
     const hospitalDropdown = document.getElementById("hospital");
     const simpleReportTable = document.getElementById("simple-report-table").querySelector("tbody");
@@ -20,7 +19,6 @@ document.addEventListener("DOMContentLoaded", () => {
                 return;
             }
 
-            // Populate the dropdown and set the default hospital
             hospitals.forEach((hospital, index) => {
                 const option = document.createElement("option");
                 option.value = hospital.id;
@@ -32,7 +30,6 @@ document.addEventListener("DOMContentLoaded", () => {
                 }
             });
 
-            // Automatically load the default hospital's report
             if (defaultHospitalId) {
                 loadHospitalReports(defaultHospitalId);
             }
@@ -55,7 +52,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
     // Load hospital reports
     function loadHospitalReports(hospitalId) {
-        // Fetch simple report
+        // For simple report
         fetch(`/supervisor/api/reports/hospital/${hospitalId}/simple/`, {
             headers: { Authorization: `Token ${API_TOKEN}` },
         })
@@ -73,7 +70,7 @@ document.addEventListener("DOMContentLoaded", () => {
                 simpleReportTable.innerHTML = "<tr><td colspan='2'>No data available</td></tr>";
             });
 
-        // Fetch detailed report
+        // For detailed report
         fetch(`/supervisor/api/reports/hospital/${hospitalId}/detailed/`, {
             headers: { Authorization: `Token ${API_TOKEN}` },
         })

@@ -12,13 +12,11 @@ from .statistics import calculate_disease_statistics, calculate_hospital_statist
 from case.models import Case
 from hospital.models import Hospital
 from django.http import JsonResponse
-import logging
-logger = logging.getLogger(__name__)
 
 
 def hospital_statistics_view(request):
     """
-    View to render the Hospital Statistics template.
+    View to render the Hospital Statistics page.
     """
     token_key = request.session.get('api_token') or request.headers.get('Authorization', '').split('Token ')[-1]
 
@@ -26,12 +24,12 @@ def hospital_statistics_view(request):
         raise PermissionDenied("No token provided. Please log in again.")
     
     try:
-            # Validate the token
         hospital_token = HospitalToken.objects.get(key=token_key)
     except HospitalToken.DoesNotExist:
             raise PermissionDenied("Invalid token. Please log in again.")
 
     return render(request, 'hospital/statistics.html', {'api_token': token_key})
+
 
 class HospitalStatisticsAPIView(APIView):
     """
@@ -41,14 +39,12 @@ class HospitalStatisticsAPIView(APIView):
     authentication_classes = [HospitalTokenAuthentication]
 
     def get(self, request, *args, **kwargs):
-        hospital = request.user  # The authenticated hospital
-        # Ensure hospital is not None
+        hospital = request.user
         if not hospital:
             raise AuthenticationFailed("Authentication failed.")
         if not isinstance(hospital, Hospital):
                 return Response({"error": "Access denied. Only hospitals can view this endpoint."}, status=403)
 
-        # Calculate statistics
         common, recovered, deaths, daily_stats = calculate_hospital_statistics(hospital)
 
         response_data = {
@@ -57,8 +53,6 @@ class HospitalStatisticsAPIView(APIView):
             'death_disease': deaths.to_dict(orient='records') if deaths is not None else [],
             'daily_stats': daily_stats.to_dict(orient='records') if daily_stats is not None else [],
         }
-
-        logger.debug("Response data: %s", response_data)
 
         try:
             return Response(response_data)
@@ -71,8 +65,7 @@ class HospitalStatisticsAPIView(APIView):
 
 def disease_statistics(request):
     """
-    View to render the disease statistics HTML page.
-    This page will fetch data from the API dynamically.
+    View to render the disease statistics page.
     """
     return render(request, 'disease_statistics/main_statistics.html')
 
@@ -83,7 +76,6 @@ class DiseaseStatisticsAPIView(APIView):
     """
 
     def get(self, request, *args, **kwargs):
-        # Fetch common diseases, state statistics, and unique states
         common_diseases, state_disease_stats, unique_states, seasonal_stats = calculate_disease_statistics()
 
         if common_diseases is None:
@@ -92,11 +84,9 @@ class DiseaseStatisticsAPIView(APIView):
                 status=status.HTTP_204_NO_CONTENT
             )
 
-        # Convert DataFrames to dictionaries for API response
         common_diseases_data = common_diseases.to_dict('records')
         state_disease_stats_data = state_disease_stats.to_dict('records')
 
-        # Format seasonal statistics
         seasonal_data = {}
         for _, row in seasonal_stats.iterrows():
             season = row['season']
@@ -107,7 +97,6 @@ class DiseaseStatisticsAPIView(APIView):
                 "total_cases": row['total_cases']
             })
 
-        # Build API response
         response_data = {
             "common_diseases": common_diseases_data,
             "state_disease_stats": state_disease_stats_data,
@@ -116,6 +105,7 @@ class DiseaseStatisticsAPIView(APIView):
         }
 
         return Response(response_data, status=status.HTTP_200_OK)
+
 
 class FilteredCasesAPIView(APIView):
     """
@@ -129,10 +119,8 @@ class FilteredCasesAPIView(APIView):
         if not disease_name or not filter_category:
             return Response({"error": "Disease and filter category are required."}, status=400)
 
-        # Filter cases by disease
         cases = Case.objects.filter(disease__name=disease_name)
 
-        # Aggregate data based on filter category
         filter_mapping = {
             "age": "patient_age",
             "sex": "patient_sex",
@@ -147,7 +135,6 @@ class FilteredCasesAPIView(APIView):
         filter_field = filter_mapping[filter_category]
         aggregated_data = cases.values(filter_field).annotate(count=Count('id')).order_by(filter_field)
 
-        # Format the response
         response_data = [{"label": item[filter_field], "count": item["count"]} for item in aggregated_data]
 
         return Response(response_data)

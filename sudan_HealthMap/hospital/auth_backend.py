@@ -14,7 +14,6 @@ class HospitalBackend(BaseBackend):
     def get_user(self, user_id):
         try:
             hospital = Hospital.objects.get(pk=user_id)
-            # Dynamically add is_active to the hospital object
             setattr(hospital, 'is_active', True)
             return hospital
         except Hospital.DoesNotExist:

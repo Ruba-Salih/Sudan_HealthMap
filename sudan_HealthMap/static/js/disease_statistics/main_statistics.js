@@ -203,16 +203,13 @@ document.addEventListener('DOMContentLoaded', function () {
                 });
             }
 
-            // Initialize Pie Chart with Default Disease
             updatePieChart(defaultDisease);
 
-            // Add Event Listener for Disease Pie Dropdown
             diseasePieDropdown.addEventListener('change', function () {
                 updatePieChart(this.value);
             });
 
 
-            // Bar Chart button click
             function updateFilteredChart(disease, category) {
                 if (!disease || !category) {
                     alert("Please select both a disease and a filter category.");

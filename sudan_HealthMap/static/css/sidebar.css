@@ -5,13 +5,23 @@
     left: 0;
     width: 250px;
     height: 100%;
-    background-color: #269393;
+    background:linear-gradient(to bottom, #269393, #4e9f97);
+    /*background-color: #269393;*/
     padding: 20px;
     box-shadow: 2px 0 5px rgba(0, 0, 0, 0.1);
     color: #ecf0f1;
     display: flex;
     flex-direction: column;
     justify-content: space-between;
+}
+
+.logo{
+    text-align: left;
+    font-size: 27px;
+}
+
+.sudan-word{
+    color: #ecf0f1;
 }
 
 .sidebar nav ul {
@@ -27,7 +37,7 @@
 .sidebar nav ul li a {
     color: #ecf0f1;
     text-decoration: none;
-    font-size: 16px;
+    font-size: 17px;
     padding: 10px 15px;
     border-radius: 4px;
     display: block;

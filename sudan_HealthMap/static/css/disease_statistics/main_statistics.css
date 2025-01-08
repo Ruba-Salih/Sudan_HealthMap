@@ -5,10 +5,7 @@
     max-width: 1200px;
     padding: 20px;
     background-color: #ffffff;
-    border-radius: 8px;
-    /*box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);*/
-   
-    
+    border-radius: 8px;  
 }
 
 .statistics-section{
@@ -22,14 +19,14 @@
 
 h1 {
     margin-bottom: 10px;
-    margin-top: -40px;
     font-weight: bold;
     color: #008080;
 }
 
-h2 {
+.container h2 {
     margin-bottom: 15px;
     font-weight: bold;
+    font-size: 25px;
     color: #333;
     text-align: center;
     margin: 20px 0;
@@ -37,7 +34,7 @@ h2 {
 
 /* Style for informative paragraph */
 .summary-text {
-    font-size: 16px;
+    font-size: 20px;
     line-height: 1.6;
     color: #333;
     text-align: center;
@@ -78,7 +75,7 @@ h2 {
 }
 
 
-/* Table and spacing */
+/* Table section */
 table {
     width: 80%;
     margin: 20px auto;
@@ -109,7 +106,7 @@ table tbody tr:hover {
     background-color: #f1f1f1;
 }
 
-/* Style for the scrollable table container */
+/* The scroll for the table container */
 .table-container {
     max-height: 500px;
     overflow-y: auto;
@@ -118,7 +115,7 @@ table tbody tr:hover {
     margin: 20px auto;
 }
 
-/* Table styles */
+/* Table section */
 thead {
     position: sticky;
     top: 0;

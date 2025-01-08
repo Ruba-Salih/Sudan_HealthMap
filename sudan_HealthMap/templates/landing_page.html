@@ -1,62 +1,88 @@
 <!DOCTYPE html>
 <html lang="en">
-    {% load static %}
+{% load static %}
 <head>
-
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta name="description" content="Hospital Management System">
-    <title>Hospital Management System</title>
+    <meta name="description" content="Sudan Health Map - Revolutionizing Public Health in Sudan">
+    <title>Sudan Health Map</title>
     <link rel="stylesheet" href="{% static 'css/landing_page.css' %}">
 </head>
 <body>
     <header class="hero">
         <div class="container">
-            <h1>Welcome to the Hospital Management System</h1>
-            <p>Efficiently manage hospitals, staff, and resources in one place.</p>
-            <a href="/dashboard" class="btn btn-primary">Get Started</a>
+            <h1>Welcome to Sudan Health Map</h1>
+            <p>Comprehensive health insights across the states of Sudan.</p>
+            <a href="{% url 'login_view' %}" class="btn btn-primary">Get Started</a>
+            <img src="{% static 'images/map.png' %}" alt="Sudan Map">
         </div>
     </header>
 
     <main>
+        <!-- Features Section -->
         <section class="features">
             <div class="container">
                 <h2>Features</h2>
+                <br>
                 <div class="feature-cards">
                     <div class="card">
-                        <h3>Hospital Management</h3>
-                        <p>Add, edit, and manage hospitals with ease.</p>
+                        <h3>Disease Tracking</h3>
+                        <p>Monitor and log diseases with detailed data like patient demographics, symptoms, and outcomes.</p>
                     </div>
                     <div class="card">
                         <h3>State Statistics</h3>
-                        <p>Analyze disease trends and statistics by state.</p>
+                        <p>Analyze disease prevalence and trends across states to make informed health decisions.</p>
                     </div>
                     <div class="card">
-                        <h3>Secure Access</h3>
-                        <p>Ensure secure access with role-based authentication.</p>
+                        <h3>Hospital Insights</h3>
+                        <p>Interactive visualizations to track recoveries, deaths, and disease patterns by hospital.</p>
                     </div>
                 </div>
             </div>
         </section>
 
-        <section class="about">
+        <!-- About Section -->
+        <section class="aboutvision">
+            
+            <h2>About Us</h2>
+            <p>At Sudan Health Map, we leverage data-driven insights to empower healthcare providers and communities. By providing real-time health analytics, we aim to improve public health outcomes across Sudan.</p>
+            <br>
+            <h2>Our Vision</h2>
+            <p>To create a healthier Sudan through actionable insights and collaborative healthcare solutions.</p>
+            
+        </section>
+
+        <!-- Testimonials Section -->
+        <section class="testimonials">
             <div class="container">
-                <h2>About the Project</h2>
-                <p>This system is designed to help supervisors manage hospitals effectively, providing insights into disease statistics, resource allocation, and hospital performance.</p>
+                <h2>What People Say</h2>
+                <div class="testimonial-cards">
+                    <div class="testimonial">
+                        <p>"Sudan Health Map has transformed how we track and manage diseases in our hospital. So glade we are using it!"</p>
+                        <h4>- Dr. Nihal Salih</h4>
+                    </div>
+                    <div class="testimonial">
+                        <p>"The state statistics feature allows us to focus resources where they're needed most. Excellent tool!"</p>
+                        <h4>- Health Supervisor, Khartoum</h4>
+                    </div>
+                </div>
             </div>
         </section>
 
-        <section class="call-to-action">
-            <div class="container">
-                <h2>Ready to Manage Better?</h2>
-                <a href="/dashboard" class="btn btn-secondary">Go to Dashboard</a>
-            </div>
-        </section>
+      
     </main>
 
+    <!-- Footer Section -->
     <footer>
         <div class="container">
-            <p>&copy; 2024 Hospital Management System. All rights reserved.</p>
+            <p>Contact Us</p>
+            <ul class="social-links">
+                <li><a href="">Email: rubasalih900@gmail.com</a></li>
+                <br>
+                <li><a href="https://x.com/Ruba_Salih900">Twitter</a></li>
+                <li><a href="https://www.linkedin.com/in/ruba-salih-a5a695220/">LinkedIn</a></li>
+            </ul>
+            <p>&copy; 2025 Sudan Health Map. All rights reserved.</p>
         </div>
     </footer>
 </body>

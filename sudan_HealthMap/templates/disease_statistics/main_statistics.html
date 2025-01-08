@@ -1,12 +1,8 @@
 {% load static %}
 
-{% block title %}
-Disease Statistics
-{% endblock %}
-
 {% block content %}
 <div class="container">
-<h1 style="text-align: center;">Sudan Disease Statistics</h1>
+<h1 style="text-align: center;">Welcome To <i>{{ request.session.username }}'s</i> Health Map</h1>
 <br>
 <section class="statistics-section">
 
@@ -56,7 +52,7 @@ Disease Statistics
         <option value="main_symptom">Main Symptom</option>
     </select>
     
-    <button id="filter-button" style="margin-left: 10px; padding: 5px 10px; font-size: 16px;" aria-label="Filter and show results" title="Filter and show results">
+    <button id="filter-button" style="margin-left: 10px;  font-size: 16px;">
         Show Results
     </button>
 </div>
@@ -101,7 +97,7 @@ Disease Statistics
 
 <br>
 
-<h2>State-Wise Disease Distribution Chart</h2>
+<h2>State-Wise Disease Distribution</h2>
 <p class="summary-text">A visual representation to  represents the prevalence of a selected disease across various states. By analyzing this chart, you can quickly identify regions with higher case counts, enabling targeted public health strategies and resource allocation.</p>
 
 <div style="margin-top: 20px;">

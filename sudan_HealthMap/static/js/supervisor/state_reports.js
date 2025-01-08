@@ -2,7 +2,7 @@ console.log("API Token successfully loaded.");
 document.addEventListener("DOMContentLoaded", () => {
     const stateDropdown = document.getElementById("state");
     const stateReportTable = document.getElementById("state-report-table").querySelector("tbody");
-    const defaultStateName = "Khartoum"; // Set your default state name here
+    const defaultStateName = "Khartoum";
 
     // Fetch and populate states
     fetch("/supervisor/api/states/", {
@@ -18,22 +18,18 @@ document.addEventListener("DOMContentLoaded", () => {
                 option.textContent = state.name;
                 stateDropdown.appendChild(option);
 
-                // Check if the state matches the default state
                 if (state.name.toLowerCase() === defaultStateName.toLowerCase()) {
                     defaultStateId = state.id;
                 }
             });
 
-            // Set the default state if found
             if (defaultStateId) {
                 stateDropdown.value = defaultStateId;
 
-                // Automatically load the default state's report
                 fetchStateReport(defaultStateId);
             }
         });
 
-    // Fetch and display state reports
     document.getElementById("state-report-form").addEventListener("submit", (event) => {
         event.preventDefault();
         const stateId = stateDropdown.value;
@@ -62,7 +58,7 @@ document.addEventListener("DOMContentLoaded", () => {
             });
     }
 
-    // Enable downloading the report
+    // For downloading the report
     document.getElementById("download-state-report").addEventListener("click", () => {
         const stateId = stateDropdown.value;
         if (!stateId) {

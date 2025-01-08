@@ -23,8 +23,8 @@ document.addEventListener("DOMContentLoaded", () => {
     }
     console.log("DOM fully loaded and parsed.");
 
-    fetchHospitals(); // Fetch all hospitals
-    fetchStates(); // Fetch states for dropdown
+    fetchHospitals();
+    fetchStates();
 });
 
 // Fetch and populate state dropdown
@@ -77,7 +77,7 @@ async function fetchHospitals() {
 // Display hospitals in the hospital list
 function displayHospitals(hospitals) {
     const list = document.getElementById("hospital-list");
-    list.innerHTML = ""; // Clear the previous list
+    list.innerHTML = "";
 
     if (!hospitals || hospitals.length === 0) {
         list.innerHTML = "<li>No hospitals found.</li>";
@@ -97,8 +97,6 @@ function displayHospitals(hospitals) {
     });
 }
 
-
-// Helper function to get the CSRF token from the cookies
 function getCSRFToken() {
     let cookieValue = null;
     if (document.cookie && document.cookie !== "") {
@@ -114,7 +112,7 @@ function getCSRFToken() {
     return cookieValue;
 }
 
-// Add a new hospital
+// Add hospital
 async function addHospital(event) {
     event.preventDefault();
     const name = document.getElementById("name").value.trim();
@@ -134,7 +132,7 @@ async function addHospital(event) {
             method: "POST",
             headers: {
                 "Content-Type": "application/json",
-                "X-CSRFToken": csrfToken, // Add CSRF token to the headers
+                "X-CSRFToken": csrfToken,
                 Authorization: `Token ${API_TOKEN}`,
             },
             body: JSON.stringify({ name, state, username, password }),
@@ -143,7 +141,7 @@ async function addHospital(event) {
         if (response.ok) {
             alert("Hospital added successfully!");
             document.getElementById("add-hospital-form").reset();
-            fetchHospitals(); // Refresh the list
+            fetchHospitals();
         } else {
             const errorData = await response.json();
             alert("Error: " + JSON.stringify(errorData));
@@ -168,7 +166,7 @@ async function deleteHospital(hospitalId) {
 
         if (response.ok) {
             alert("Hospital deleted successfully!");
-            fetchHospitals(); // Refresh the list
+            fetchHospitals();
         } else {
             console.error("Failed to delete hospital:", response.statusText);
         }
@@ -180,8 +178,8 @@ async function deleteHospital(hospitalId) {
 // Show update form for a specific hospital
 function showUpdateForm(hospitalId, currentName, currentState, currentAddress) {
     document.getElementById("name").value = currentName;
-    document.getElementById("state").value = currentState; // Ensure state dropdown uses correct value
-    document.getElementById("address").value = currentAddress || ""; // Pre-fill address or use empty string
+    document.getElementById("state").value = currentState;
+    document.getElementById("address").value = currentAddress || "";
 
     document.getElementById("add-hospital-btn").style.display = "none";
     document.getElementById("update-hospital-btn").style.display = "block";
@@ -215,7 +213,7 @@ function showUpdateForm(hospitalId, currentName, currentState, currentAddress) {
 
             if (response.ok) {
                 alert("Hospital updated successfully!");
-                fetchHospitals(); // Refresh the list
+                fetchHospitals();
                 resetForm();
             } else {
                 const errorData = await response.json();
@@ -227,7 +225,7 @@ function showUpdateForm(hospitalId, currentName, currentState, currentAddress) {
     };
 }
 
-// Reset the form and toggle buttons
+// Reset the form and buttons
 function resetForm() {
     document.getElementById("name").value = "";
     document.getElementById("state").value = "";
@@ -256,7 +254,7 @@ async function searchHospitals(event) {
                 (hospital.address && hospital.address.toLowerCase().includes(query))
             );
 
-            displayHospitals(filteredHospitals); // Display filtered results
+            displayHospitals(filteredHospitals);
         } else {
             console.error("Failed to fetch hospitals:", response.statusText);
         }
