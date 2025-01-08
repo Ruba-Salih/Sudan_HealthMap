@@ -5,9 +5,9 @@
 **Sudan Health Map** is a health management and disease tracking system designed to provide a comprehensive view of health statistics across different states of Sudan. The platform supports supervisors and hospitals with features such as disease tracking, state statistics, and hospital statistics.
 
 
-## Features
+### Features
 
-### User Roles and Accounts
+## User Roles and Accounts
 - **Supervisor Account**:
   - **Manage Hospitals**: Add, update, and manage hospitals under their supervision.
   - **Supervisory Reports**: Access summary reports of hospitals and diseases, including detailed case tracking in supervised hospitals.
@@ -44,13 +44,13 @@
   - State-wide comparisons and trends.
   - Hospital-specific insights for effective decision-making.
 
-## User-Friendly Management
+### User-Friendly Management
 - Centralized dashboard for managing hospitals, cases, and reports.
 - Real-time updates and insights for better health data management.
 - Designed for both supervisors and hospitals to streamline operations and improve decision-making.
 
 
-### Technologies Used
+## Technologies Used
 
 - **Backend**: python Django, Django REST Framework
 - **Database**: MySQL
@@ -59,14 +59,17 @@
 
 ---
 
-### Deployment
+## Deployment
 
-1. **Install Docker Desktop If Not**: [Download Here](https://www.docker.com/products/docker-desktop)
+1. **Install Docker Desktop If Not**:  [Download Here](https://www.docker.com/products/docker-desktop)
 
 2. **Clone the Repository**:
 
 ```bash
 git clone https://github.com/Ruba-Salih/Sudan_HealthMap.git
+```
+
+```bash
 cd Sudan_HealthMap
 ```
 
@@ -89,4 +92,4 @@ cd Sudan_HealthMap
 - http://localhost:8000
 
 ### Authors
-- Ruba Salih Adam-[GitHub](https://github.com/Ruba-Salih)
+- Ruba Salih Adam - [GitHub](https://github.com/Ruba-Salih)
