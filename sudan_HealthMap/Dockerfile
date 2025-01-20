@@ -8,11 +8,13 @@ ENV PYTHONUNBUFFERED 1
 # Set the working directory
 WORKDIR /app
 
-# Install dependencies
+# Install dependencies including MySQL client
 RUN apt-get update && apt-get install -y \
+    netcat-openbsd \
     default-libmysqlclient-dev \
     pkg-config \
     gcc \
+    default-mysql-client \
     && apt-get clean
 
 # Copy requirements and install Python dependencies

@@ -84,13 +84,14 @@ cd Sudan_HealthMap
 ```bash
     docker compose exec web python manage.py migrate
 ```
-
-- **Load Default Data (Optional)**:
+5. **Create a Supervisor User**
 ```bash
-    docker compose exec web python manage.py loaddata data.json
+    docker compose exec web python manage.py shell
+    from supervisor.models import Supervisor
+  Supervisor.objects.create_superuser (email="admin@example.com", name="Admin",   password="adminpassword")
 ```
 
-5. **Access the Application**:
+6. **Access the Application**:
 - http://localhost:8000
 
 ### Authors
