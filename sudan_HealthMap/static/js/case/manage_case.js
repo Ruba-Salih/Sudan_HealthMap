@@ -134,8 +134,8 @@ document.addEventListener("DOMContentLoaded", () => {
                                 <td>${caseItem.main_symptom_causing_death || "-"}</td>
                                 <td>${caseItem.season || "-"}</td>
                                 <td>
-                                    <button class="btn-secondary" data-id="${caseItem.id}">Edit</button>
-                                    <button class="btn-primary" data-id="${caseItem.id}">Delete</button>
+                                    <button class="edit-button btn-secondary" data-id="${caseItem.id}">Edit</button>
+                                    <button class="delete-button btn-primary" data-id="${caseItem.id}">Delete</button>
                                 </td>
                             </tr>
                         `;
